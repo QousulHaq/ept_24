@@ -1,0 +1,33 @@
+cache:
+  paths:
+    - vendor/
+
+stages:
+  - test
+  - staging
+
+unit-test:
+  stage: test
+  image: ghcr.io/digital-entropy/dokar-php/cli:8.0
+  before_script:
+    - cp .env.gitlab .env
+    - composer install
+    - chmod -R 777 ./bootstrap/cache
+    - chmod -R 777 ./storage
+  script:
+    - php -v
+    - echo "Running Tests"
+    - php artisan test
+
+#deploy:
+#  stage: staging
+#  image: ghcr.io/digital-entropy/dokar-php/cli:8.0
+#  before_script:
+#    - mkdir ~/.ssh
+#    - echo -e "$DEV_SERVER_KEY" > ~/.ssh/id_rsa
+#    - chmod 600 ~/.ssh/id_rsa
+#    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+#  script:
+#    - envoy run deploy-dev --user=$DEV_SERVER_USER --host=$DEV_SERVER_HOST --dir=$DEV_SERVER_DIR
+#  only:
+#    - master

@@ -1,0 +1,92 @@
+#app {
+    height: 100%;
+
+    .container {
+        height: 100%;
+    }
+}
+
+.base-layout {
+    .trigger {
+        font-size: 18px;
+        line-height: 64px;
+        padding: 0 24px;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+    .trigger:hover {
+        color: #1890ff;
+    }
+
+    .logo {
+        height: 32px;
+        margin: 16px;
+        color: rgba(255, 255, 255, 0.65);
+        background-color: rgba(255, 255, 255, 0.2);
+        img {
+            height: 80%;
+        }
+
+        .logo-text {
+
+        }
+    }
+}
+
+.aside {
+    box-shadow: 2px 0 6px rgba(0,21,41,.35);
+}
+
+.page-container {
+    margin: 0;
+    display: flex;
+    flex: auto;
+    flex-direction: column;
+}
+
+.header {
+    box-shadow: 0 1px 4px rgba(0,21,41,.08);
+    padding: 0;
+    z-index: 206;
+    position: fixed;
+    width: 100%;
+}
+
+.header-notice-wrapper {
+    top: 50px !important;
+}
+.header-notice{
+    display: inline-block;
+    transition: all 0.3s;
+    span {
+        vertical-align: initial;
+    }
+}
+
+.page-content {
+    margin: 24px 16px;
+    padding: 24px;
+    min-height: auto !important;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-break: keep-all
+}
+
+.copyable .ant-btn {
+    opacity: 0;
+}
+
+.copyable:hover .ant-btn {
+    opacity: 100% !important;
+}
+
+.form-filter-wrapper > div {
+    display: none;
+    margin-bottom: 12px;
+}
+
+.form-filter-wrapper.expanded > div {
+    display: block;
+}

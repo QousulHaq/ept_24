@@ -1,0 +1,84 @@
+{
+    "name": "digital-entropy/cbt",
+    "type": "project",
+    "description": "CBT application based Laravel Framework.",
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
+    "license": "proprietary",
+    "require": {
+        "php": "^8.0",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "beyondcode/laravel-websockets": "^2.0",
+        "dentro/yalr": "1.0.x-dev",
+        "doctrine/dbal": "^3.3",
+        "fideloper/proxy": "^4.0",
+        "guzzlehttp/guzzle": "^7.3",
+        "jalameta/jps-patcher": "^2.0",
+        "jalameta/jps-support": "^0.1.11",
+        "laravel/fortify": "^1.7",
+        "laravel/framework": "^8.0",
+        "laravel/horizon": "^5.0",
+        "laravel/octane": "^1.0",
+        "laravel/passport": "^10.0",
+        "laravel/tinker": "^2.0",
+        "league/csv": "^9.7",
+        "nyholm/psr7": "^1.2",
+        "owen-it/laravel-auditing": "^13",
+        "sentry/sentry-laravel": "^2.1.1",
+        "silber/bouncer": "^1.0.0-rc.7",
+        "spatie/crypto": "^2.0",
+        "spatie/laravel-ray": "^1.17",
+        "spiral/roadrunner": "^2.0",
+        "veelasky/laravel-hashid": "^2.0"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "facade/ignition": "^2.0",
+        "fakerphp/faker": "^1.4",
+        "mockery/mockery": "^1.0",
+        "nunomaduro/collision": "^5.0",
+        "phpunit/phpunit": "^9.0"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan horizon:publish --ansi"
+        ]
+    }
+}

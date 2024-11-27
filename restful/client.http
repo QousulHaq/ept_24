@@ -1,0 +1,55 @@
+POST {{host}}/oauth/token
+Content-Type: application/json
+Accept: application/json
+
+{
+    "grant_type": "password",
+    "username": "{{username}}",
+    "password": "{{password}}",
+    "client_id": {{client_id}},
+    "client_secret": "{{client_secret}}",
+    "scope": ""
+}
+
+> {% client.global.set("auth_token", response.body.access_token); %}
+
+### get profile
+GET {{host}}/api/me
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+###
+GET {{host}}/api/client/exam?state=past
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+> {% client.global.set("exam_id", response.body.data[0].id); %}
+
+###
+POST {{host}}/api/client/exam/{{exam_id}}/enroll
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+> {% client.global.set("signature", response.body.data.signature); %}
+
+###
+GET {{host}}/api/client/section
+Authorization: Bearer {{auth_token}}
+X-Signature-Enroll: {{signature}}
+Accept: application/json
+
+> {% client.global.set("participant_section", response.body.sections[0].id); %}
+
+###
+POST {{host}}/api/client/section/{{participant_section}}/start
+Authorization: Bearer {{auth_token}}
+X-Signature-Enroll: {{signature}}
+Accept: application/json
+
+###
+GET {{host}}/api/client/section/{{participant_section}}
+Authorization: Bearer {{auth_token}}
+X-Signature-Enroll: {{signature}}
+Accept: application/json
+
+###
