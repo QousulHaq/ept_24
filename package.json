@@ -1,8 +1,8 @@
 {
     "private": true,
     "scripts": {
-        "development": "section=bo mix",
-        "watch": "section=bo mix watch",
+        "development": "set section=bo&&mix",
+        "watch": "set section=bo&& mix watch",
         "watch-poll": "section=bo mix watch -- --watch-options-poll=1000",
         "hot": "section=bo mix watch --hot",
         "production": "section=bo mix --production",
