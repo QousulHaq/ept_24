@@ -6,8 +6,8 @@
         "watch-poll": "section=bo mix watch -- --watch-options-poll=1000",
         "hot": "section=bo mix watch --hot",
         "production": "section=bo mix --production",
-        "client:development": "section=client mix",
-        "client:watch": "section=client mix watch",
+        "client:development": "set section=client&& mix",
+        "client:watch": "set section=client&& mix watch",
         "client:watch-poll": "section=client mix watch -- --watch-options-poll=1000",
         "client:hot": "section=client mix watch --hot",
         "client:production": "section=client mix --production"
@@ -55,5 +55,12 @@
         "vuex": "^3.6.0",
         "vuex-persistedstate": "^3.1.0",
         "weekstart": "^1.0.1"
+    },
+    "dependencies": {
+        "@inertiajs/inertia": "^0.11.1",
+        "@inertiajs/inertia-react": "^0.8.1",
+        "@inertiajs/progress": "^0.2.7",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
     }
 }
