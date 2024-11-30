@@ -31,7 +31,7 @@
 </head>
 
 <body>
-<div id="app">
+<div id="app-vue">
   @yield('app')
 </div>
 <script src="{{ mix('js/back-office/manifest.js') }}"></script>

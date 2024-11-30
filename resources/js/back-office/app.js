@@ -11,6 +11,10 @@ import '../lib/laravel'
 import { formatISO9075 } from 'date-fns'
 import Vue from 'vue'
 
+import { createInertiaApp } from '@inertiajs/inertia-react';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 
 require('./bootstrap');
@@ -110,8 +114,15 @@ Vue.mixin({
  */
 
 new Vue({
-    el: '#app',
+    el: '#app-vue',
 		mounted() {
 
 		}
+});
+
+createInertiaApp({
+    resolve: name => require(`./Pages/${name}`).default, // Path ke folder Pages
+	setup({ el, App, props }) {
+		createRoot(el).render(<App {...props} />)
+	},
 });

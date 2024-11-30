@@ -13,6 +13,7 @@
         "client:production": "section=client mix --production"
     },
     "devDependencies": {
+        "@babel/preset-react": "^7.25.9",
         "@fortawesome/fontawesome-free": "^5.15.1",
         "@sentry/browser": "^5.29.0",
         "@sentry/integrations": "^5.29.0",

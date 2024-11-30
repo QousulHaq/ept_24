@@ -7,6 +7,7 @@ use App\Entities\Account\User;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
+use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
@@ -23,8 +24,9 @@ class DashboardController extends Controller
         $totalPastExam = Exam::query()->where('ended_at', '!=', null)
             ->where('ended_at', '<=', Carbon::now())->count();
 
-        return view('pages.dashboard',
-            compact('totalStudent', 'totalFutureExam', 'totalPastExam', 'totalPresentExam')
-        );
+        // return view('pages.dashboard',
+        //     compact('totalStudent', 'totalFutureExam', 'totalPastExam', 'totalPresentExam')
+        // );
+        return Inertia::render('Dashboard', compact('totalStudent', 'totalFutureExam', 'totalPastExam', 'totalPresentExam'));
     }
 }

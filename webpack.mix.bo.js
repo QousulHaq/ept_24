@@ -13,7 +13,7 @@ const mix = require('laravel-mix');
 
 // back office assets
 mix.sass('resources/style/back-office/app.scss', 'public/css/back-office');
-mix.js('resources/js/back-office/app.js', 'public/js/back-office').vue();
+mix.js('resources/js/back-office/app.js', 'public/js/back-office').vue().react().version();
 
 mix.webpackConfig({
 	stats: "minimal",

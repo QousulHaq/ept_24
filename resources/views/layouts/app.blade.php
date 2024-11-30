@@ -22,15 +22,18 @@
         </div>
       @endif
       @if ($errors->any())
-        <div class="alert alert-danger">
-          <ul>
-            @foreach($errors->all() as $error)
+      <div class="alert alert-danger">
+        <ul>
+          @foreach($errors->all() as $error)
               <li>{{ $error }}</li>
             @endforeach
           </ul>
         </div>
       @endif
       @yield('content')
+      @if(isset($page))
+        @inertia
+      @endif
     </div>
     <footer class="main-footer">
       @include('partials.app.footer')
