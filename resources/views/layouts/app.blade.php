@@ -3,8 +3,7 @@
 @section('app')
   <div class="main-wrapper">
     @stack('modal')
-    <div class="navbar-bg"></div>
-    <nav class="navbar navbar-expand-lg main-navbar">
+    <nav class="navbar navbar-expand-lg main-navbar bg-primary">
       @include('partials.app.topnav')
     </nav>
     <div class="main-sidebar">

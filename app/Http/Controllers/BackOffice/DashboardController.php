@@ -7,11 +7,13 @@ use App\Entities\Account\User;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use App\Entities\Question\Package;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         /** @noinspection PhpUndefinedMethodInspection */
         $totalStudent = User::query()->whereIs('student')->count();
@@ -24,9 +26,11 @@ class DashboardController extends Controller
         $totalPastExam = Exam::query()->where('ended_at', '!=', null)
             ->where('ended_at', '<=', Carbon::now())->count();
 
+        $packages = Package::query()->paginate($request->input('per_page', 15));
+
         // return view('pages.dashboard',
         //     compact('totalStudent', 'totalFutureExam', 'totalPastExam', 'totalPresentExam')
         // );
-        return Inertia::render('Dashboard', compact('totalStudent', 'totalFutureExam', 'totalPastExam', 'totalPresentExam'));
+        return Inertia::render('Home', compact('totalStudent', 'totalFutureExam', 'totalPastExam', 'totalPresentExam', 'packages'));
     }
 }
