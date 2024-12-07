@@ -9,25 +9,33 @@ use App\Http\Controllers\Controller;
 use App\Jobs\Package\CreateNewPackage;
 use App\Jobs\Package\DeleteExistingPackage;
 use App\Jobs\Package\UpdateExistingPackage;
+use Inertia\Inertia;
 
 class PackageController extends Controller
 {
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
+
+    // * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+    
     public function index(Request $request)
     {
-        view()->share('packages', Package::query()->paginate($request->input('per_page', 15)));
+        // view()->share('packages', Package::query()->paginate($request->input('per_page', 15)));
 
-        return view('pages.package.index');
+        // return view('pages.package.index');
+
+        $packages = Package::query()->paginate($request->input('per_page', 15));
+
+        return Inertia::render('Packages/Index', compact('packages'));
+        
     }
 
     /**
      * @param \Illuminate\Http\Request $request
      * @param \App\Entities\Question\Package $package
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
+    // * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
     public function show(Request $request, Package $package)
     {
         $items = null;
@@ -59,16 +67,18 @@ class PackageController extends Controller
 
         $scheduledExams = $package->exams()->where('scheduled_at', '>', Carbon::now())->get();
 
-        return view('pages.package.show',
-            compact('package', 'items', 'intros', 'subpackage', 'scheduledExams'));
+        // return view('pages.package.show',
+        //     compact('package', 'items', 'intros', 'subpackage', 'scheduledExams'));
+        return Inertia::render('Packages/ShowPackages', compact('package', 'items', 'intros', 'subpackage', 'scheduledExams'));
     }
 
     /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
+    // * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
     public function create()
     {
-        return view('pages.package.create');
+        // return view('pages.package.create');
+        return Inertia::render('Packages/Create');
     }
 
     /**
@@ -87,13 +97,15 @@ class PackageController extends Controller
 
     /**
      * @param \App\Entities\Question\Package $package
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
+    // * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
     public function edit(Package $package)
     {
-        view()->share('package', $package);
+        // view()->share('package', $package);
 
-        return view('pages.package.edit');
+        // return view('pages.package.edit');
+
+        return Inertia::render('Packages/Edit', compact('package'));
     }
 
     /**

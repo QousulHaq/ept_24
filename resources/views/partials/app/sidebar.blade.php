@@ -17,11 +17,12 @@
     <li class="{{ request()->is('back-office/attachment') ? ' active' : '' }}"><a class="nav-link" href="{{ route('back-office.attachment') }}"><i class="fas fa-file"></i> <span>Attachment</span></a></li>
     @endcan
 
+    @can('exam.manage')
+    <li class="{{ request()->is('back-office/schedule*') ? 'active' : '' }}"><a href="{{ route('back-office.schedule.index') }}"><i class="fas fa-clock"></i> <span>Schedules</span></a></li>
+    <li class="{{ request()->is('back-office/monitor*') ? 'active' : '' }}"><a href="{{ route('back-office.monitor.index') }}"><i class="fas fa-eye"></i> <span>Monitoring</span></a></li>
+    @endcan
+    
     {{-- <li class="menu-header">Exams</li>
-      @can('exam.manage')
-      <li class="{{ request()->is('back-office/schedule*') ? 'active' : '' }}"><a href="{{ route('back-office.schedule.index') }}"><i class="fas fa-clock"></i> <span>Schedules</span></a></li>
-      <li class="{{ request()->is('back-office/monitor*') ? 'active' : '' }}"><a href="{{ route('back-office.monitor.index') }}"><i class="fas fa-eye"></i> <span>Monitoring</span></a></li>
-      @endcan
     @canany(['exam.manage', 'exam.result.show'])
       <li class="{{ request()->is('back-office/history*') ? 'active' : '' }}"><a href="{{ route('back-office.history.index') }}"><i class="fas fa-book"></i> <span>History</span></a></li>
     @endcanany

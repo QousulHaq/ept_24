@@ -26,7 +26,7 @@ const DraftTable = ({ packages }) => {
                                             <td>{data?.description}</td>
                                             <td>{data?.level}</td>
                                             <td><i className={`fas ${data?.is_encrypted ? 'fa-check' : 'fa-times'}`}></i></td>
-                                            <td>{new Intl.DateTimeFormat('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(data?.updated_at))}</td>
+                                            <td>{new Intl.DateTimeFormat('id-ID', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(data?.updated_at))}</td>
                                         </tr>
                                     ))
                                 ) : (
