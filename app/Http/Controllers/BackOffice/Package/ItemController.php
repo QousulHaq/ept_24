@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Entities\Question\Package;
 use App\Http\Controllers\Controller;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Inertia\Inertia;
+use App\Http\Requests\Package\Item\UpdateItemRequest;
+use App\Jobs\Package\Item\UpdateExistingItem;
 
 class ItemController extends Controller
 {
@@ -26,17 +29,37 @@ class ItemController extends Controller
      * @param \Illuminate\Http\Request $request
      * @param \App\Entities\Question\Package $package
      * @param \App\Entities\Question\Package\Item $item
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Throwable
      */
+    // * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
     public function edit(Request $request, Package $package, Package\Item $item)
     {
         $this->getPackageData($request, $package);
 
-        view()->share('item', $item);
-        view()->share('isIntro', view()->shared('package')->introductions()->where('id', $item->id)->exists());
+        // view()->share('item', $item);
+        $isIntro = view()->share('isIntro', view()->shared('package')->introductions()->where('id', $item->id)->exists());
 
-        return view('pages.package.item.edit');
+        $item->answers->each(fn (Package\Item\Answer $answer) => $answer->makeVisible('correct_answer'));
+        $item->children->each(function (Package\Item $item) {
+            $item->answers->each(fn (Package\Item\Answer $answer) => $answer->makeVisible('correct_answer'));
+        });
+
+        // return view('pages.package.item.edit');
+        return Inertia::render("Packages/Item/Edit",[
+            'item' => $item,
+            'isIntro' => $isIntro,
+            'package' => $package
+        ]);
+    }
+
+    public function update(UpdateItemRequest $request, Package $package, Package\Item $item)
+    {
+        $job = new UpdateExistingItem($request, $item, $package);
+        $this->dispatchNow($job);
+
+        return ($job->success())
+            ? redirect()->route('back-office.package.index')->with('success', 'Item Updated!')
+            : redirect()->back()->withInput()->withErrors(['internal server error']);
     }
 
     /**

@@ -6,7 +6,7 @@ import DeleteModal from '../../ReactComponents/DeleteModal'
 
 import "../../../../../public/css/back-office/packages.css"
 
-const Index = ({ packages }, props) => {
+const Index = ({ packages }) => {
     const [seletedItems, setSelectedItem] = useState(null)
 
     useEffect(() => {
@@ -70,7 +70,7 @@ const Index = ({ packages }, props) => {
                                                                 <td><i className={`fas ${data?.is_encrypted ? 'fa-check' : 'fa-times'}`}></i></td>
                                                                 <td>{new Intl.DateTimeFormat('id-ID', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(data?.updated_at))}</td>
                                                                 <td className="align-content-center">
-                                                                    <Link href={`/back-office/package/${data?.id}`} className="mr-2"><i className="fas fa-eye alert-info"></i></Link>
+                                                                    <Link href={`/back-office/package/${data?.id}?subpackage=${data?.children[0].id}`} className="mr-2"><i className="fas fa-eye alert-info"></i></Link>
                                                                     <Link href={`/back-office/package/${data?.id}/edit`} className="mr-2"><i className="fas fa-edit alert-warning"></i></Link>
                                                                     <button type='button' className="delete-button" onClick={() => setSelectedItem(data?.id)}><i className="fas fa-trash alert-danger"></i></button>
                                                                 </td>

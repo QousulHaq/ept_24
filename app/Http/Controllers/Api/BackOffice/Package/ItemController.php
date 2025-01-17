@@ -38,13 +38,13 @@ class ItemController extends Controller
         return $item;
     }
 
-    public function update(UpdateItemRequest $request, Package $package, Package\Item $item): UpdateExistingItem
-    {
-        $job = new UpdateExistingItem($request, $item, $package);
-        $this->dispatchNow($job);
+    // public function update(UpdateItemRequest $request, Package $package, Package\Item $item): UpdateExistingItem
+    // {
+    //     $job = new UpdateExistingItem($request, $item, $package);
+    //     $this->dispatchNow($job);
 
-        return $job;
-    }
+    //     return $job;
+    // }
 
     /**s
      * @param \App\Entities\Question\Package $package

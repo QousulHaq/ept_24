@@ -27,6 +27,11 @@ class ItemRoute extends BaseRoute
             'as' => $this->name('edit'),
             'uses' => $this->uses('edit'),
         ]);
+
+        $this->router->put($this->prefix('{item}/update'), [
+            'as' => $this->name('update'),
+            'uses' => $this->uses('update'),
+        ]);
     }
 
     /**

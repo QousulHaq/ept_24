@@ -35,10 +35,10 @@ class ItemRoute extends BaseRoute
             'uses' => $this->uses('show'),
         ]);
 
-        $this->router->put($this->prefix('{item}/update'), [
-            'as' => $this->name('update'),
-            'uses' => $this->uses('update'),
-        ]);
+        // $this->router->put($this->prefix('{item}/update'), [
+        //     'as' => $this->name('update'),
+        //     'uses' => $this->uses('update'),
+        // ]);
 
         $this->router->delete($this->prefix('{item}/destroy'), [
             'as' => $this->name('destroy'),
