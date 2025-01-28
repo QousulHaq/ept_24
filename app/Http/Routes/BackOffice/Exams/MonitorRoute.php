@@ -27,6 +27,36 @@ class MonitorRoute extends BaseRoute
             'as' => $this->name('index'),
             'uses' => $this->uses('index'),
         ]);
+
+        $this->router->get($this->prefix('{exam}/start-exam'), [
+            'as' => $this->name('start-exam'),
+            'uses' => $this->uses('startExam'),
+        ]);
+
+        $this->router->get($this->prefix('{exam}/end-exam'), [
+            'as' => $this->name('end-exam'),
+            'uses' => $this->uses('endExam'),
+        ]);
+
+        $this->router->get($this->prefix('{exam}/start-exam/{user}'), [
+            'as' => $this->name('disqualified-participant'),
+            'uses' => $this->uses('disqualifiedParticipant'),
+        ]);
+
+        $this->router->get($this->prefix('{exam}/start-exam/{user}/qualified'), [
+            'as' => $this->name('qualified-participant'),
+            'uses' => $this->uses('qualifiedParticipant'),
+        ]);
+
+        $this->router->post($this->prefix('{exam}/participant/{user}/log'), [
+            'as' => $this->name('participant.log'),
+            'uses' => $this->uses('storeLog'),
+        ]);
+
+        $this->router->patch($this->prefix('{exam}/decrypt'), [
+            'as' => $this->name('decrypt'),
+            'uses' => $this->uses('decrypt'),
+        ]);
     }
 
     /**

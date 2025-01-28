@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Entities\Account\User;
 use App\Entities\Question\Package;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Carbon;
+use Inertia\Inertia;
 
 class ScheduleController extends Controller
 {
@@ -23,9 +25,19 @@ class ScheduleController extends Controller
         })->only(['create', 'edit']);
     }
 
+    // public function index()
+    // {
+    //     return view('pages.schedule.index');
+    // }
     public function index()
     {
-        return view('pages.schedule.index');
+        $query = Exam::query();
+        $query->where('scheduled_at', '>', Carbon::now());
+
+        $query->latest();
+
+        $schedule = $query->paginate();
+        return Inertia::render('Schedule/Index', compact('schedule'));
     }
 
     public function create()
@@ -33,10 +45,20 @@ class ScheduleController extends Controller
         return view('pages.schedule.create');
     }
 
-    public function show(Exam $exam)
+    // public function show(Exam $exam)
+    // {
+    //     return view('pages.schedule.show', [
+    //         'exam_id' => $exam->id,
+    //     ]);
+    // }
+
+    public function show(Request $request, Exam $exam)
     {
-        return view('pages.schedule.show', [
-            'exam_id' => $exam->id,
+        $exam->load($request->query('with', []));
+        $exam->participants->each(fn (User $user) => $user->detail->setAppends(['score'])->load('logs'));
+        
+        return Inertia::render('Schedule/Show', [
+            'exam' => $exam->toArray(),
         ]);
     }
 

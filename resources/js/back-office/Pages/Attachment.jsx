@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+
+import DraftTable from '../ReactComponents/DraftTable';
 import Pagination from '../ReactComponents/Pagination'
 
 import "../../../../public/css/back-office/attachment.css"
@@ -30,7 +32,8 @@ const AttachmentModal = ({ attachments, setOpen, selectedAttachment }) => {
     )
 }
 
-const Attachment = ({ attachments }) => {
+function Attachment({ attachments }) {
+
     const [selectedAttachment, setSelectedAttachment] = useState(null)
 
     useEffect(() => {
@@ -39,42 +42,17 @@ const Attachment = ({ attachments }) => {
 
     return (
         <>
-            <div className="page-title-container">
-                <h3 className='page-title text-black'>Your Attachment</h3>
-            </div>
-            <div className="card">
-                {selectedAttachment && <AttachmentModal attachments={attachments} setOpen={setSelectedAttachment} selectedAttachment={selectedAttachment} />}
-                <div className="card-body p-0">
-                    <div className="table-responsive">
-                        <table className="table table-striped table-md table-head">
-                            <thead>
-                                <tr>
-                                    <th className='text-black'>No.</th>
-                                    <th className='text-black'>Title</th>
-                                    <th className='text-black'>Mime</th>
-                                    <th className="text-center text-black">Description</th>
-                                    <th className="text-center text-black">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    attachments?.data.map((attachment, index) => (
-                                        <tr key={index}>
-                                            <td>{attachments?.from + index}</td>
-                                            <td>{attachment?.title}</td>
-                                            <td>{attachment?.mime}</td>
-                                            <td className="text-center">{attachment?.description ? attachment?.description : '-'}</td>
-                                            <td className="align-content-center">
-                                                <button type="button" className="btn btn-sm mr-4" onClick={() => setSelectedAttachment(attachment?.id)}><i className="fas fa-eye alert-primary"></i></button>
-                                            </td>
-                                        </tr>
-                                    ))
-                                }
-                            </tbody>
-                        </table>
+            {selectedAttachment && <AttachmentModal attachments={attachments} setOpen={setSelectedAttachment} selectedAttachment={selectedAttachment} />}
+            <div className='bank-soal'>
+                <div className="bank-soal-wrap tw-pt-5" style={{ width: "100%", height: "100%" }}>
+                    <div className="page-title tw-flex tw-justify-between tw-items-center">
+                        <h1 className='tw-text-3xl tw-font-bold tw-text-black tw-m-0'>Your Attachment</h1>
                     </div>
-                </div>
-                <div className="card-footer">
+                    <div className="filter-button-page tw-my-5">
+                    </div>
+                    <div className="table-content">
+                        <DraftTable table_data={attachments} showed_data={["title", "mime", "type"]} color="secondary7" table_action={1} handleOpenDelete={(attachment_id) => setSelectedAttachment(attachment_id)} />
+                    </div>
                     <Pagination links={attachments?.links} />
                 </div>
             </div>

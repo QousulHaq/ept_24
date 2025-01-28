@@ -34,7 +34,8 @@ class DisqualifyParticipant extends BaseJob
             }
         });
 
-        $this->onSuccess(fn () => dispatch(new DetermineExamIsComplete($exam))->delay(now()->addMinutes(3)));
+        // tanyain ini ke mas hadjir
+        // $this->onSuccess(fn () => dispatch(new DetermineExamIsComplete($exam))->delay(now()->addMinutes(3)));
     }
 
     /**

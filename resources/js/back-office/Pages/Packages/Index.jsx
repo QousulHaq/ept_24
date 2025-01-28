@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from '@inertiajs/inertia-react'
 
+import { Paper } from '@mui/material'
+
+import AddIcon from '@mui/icons-material/Add';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
+
+import DraftTable from '../../ReactComponents/DraftTable';
 import Pagination from '../../ReactComponents/Pagination'
 import DeleteModal from '../../ReactComponents/DeleteModal'
 
 import "../../../../../public/css/back-office/packages.css"
 
-const Index = ({ packages }) => {
+import { Link } from '@inertiajs/inertia-react'
+
+function Index({ packages }) {
     const [seletedItems, setSelectedItem] = useState(null)
+
+    const pathDetailPackage = (package_id, subpackage_id) => `/back-office/package/${package_id}?subpackage=${subpackage_id}`
+    const pathEditPackage = (package_id, subpackage_id) => `/back-office/package/${package_id}/edit`
 
     useEffect(() => {
         console.log(packages)
@@ -16,75 +26,41 @@ const Index = ({ packages }) => {
     return (
         <>
             {seletedItems && <DeleteModal item={packages?.data.filter((item) => item.id === seletedItems)} closeDeleteModal={() => setSelectedItem(null)} />}
-            <div className="page-title-container">
-                <h3 className='page-title text-black'>New Bank Question</h3>
-            </div>
-            <div className="packages-content">
-                <div className="new-packages-button-wrapper">
-                    <Link href='package/create' className="add-new-package">
-                        <i className="add-icon fas fa-regular fa-plus"></i>
-                        <p>Start a blank Bank Question</p>
-                    </Link>
-                    <a href="#" className="add-new-package">
-                        <i className="add-icon fas fa-regular fa-cube"></i>
-                        <p>Get Distributed Package</p>
-                    </a>
-                </div>
-                <h3 className='page-title text-black'>Make From Your Draft</h3>
-                <div className="card-table">
-                    <div className="card-table-wrapper">
-                        <div className="table-title">
-                            <h4 className='table-title-text text-black'>Draft Details</h4>
-                        </div>
-                        <div className="table-content">
-                            <div className="card">
-                                <div className="card-body p-0">
-                                    <div className="table-responsive">
-                                        <table className="table table-striped table-md table-head">
-                                            <thead>
-                                                <tr>
-                                                    <th className='text-black'>No.</th>
-                                                    <th className='text-black'>Name</th>
-                                                    <th className='text-black'>Description</th>
-                                                    <th className='text-black'>Level</th>
-                                                    <th className='text-black'>Encrypted</th>
-                                                    <th className='text-black'>Last Updated</th>
-                                                    <th className='text-black'>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {
-                                                    packages?.data.length === 0 ?
-                                                        (
-                                                            <tr>
-                                                                <td colspan="7" className="text-center">There is no packages</td>
-                                                            </tr>
-                                                        )
-                                                        :
-                                                        packages?.data.map((data, index) => (
-                                                            <tr key={index}>
-                                                                <td>{packages?.from + index}</td>
-                                                                <td>{data?.title}</td>
-                                                                <td>{data?.description}</td>
-                                                                <td>{data?.level}</td>
-                                                                <td><i className={`fas ${data?.is_encrypted ? 'fa-check' : 'fa-times'}`}></i></td>
-                                                                <td>{new Intl.DateTimeFormat('id-ID', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(data?.updated_at))}</td>
-                                                                <td className="align-content-center">
-                                                                    <Link href={`/back-office/package/${data?.id}?subpackage=${data?.children[0].id}`} className="mr-2"><i className="fas fa-eye alert-info"></i></Link>
-                                                                    <Link href={`/back-office/package/${data?.id}/edit`} className="mr-2"><i className="fas fa-edit alert-warning"></i></Link>
-                                                                    <button type='button' className="delete-button" onClick={() => setSelectedItem(data?.id)}><i className="fas fa-trash alert-danger"></i></button>
-                                                                </td>
-                                                            </tr>
-                                                        ))
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
+            <div className='new-bank-soal'>
+                <div className={`home-wrap tw-pt-5`} style={{ width: "100%", height: "100%" }}>
+                    {/* <div className="new-bank-soal-wrap overflow-y-auto bg-neutral5 p-10 pb-32" style={{ width: "100%", height: "100vh" }}> */}
+                    <div className="page-title tw-flex tw-justify-between tw-items-center">
+                        <h1 className='tw-text-3xl tw-font-bold tw-text-black tw-m-0'>New Bank Question</h1>
+                    </div>
+                    <div className="new-bank-soal-button tw-flex tw-items-center tw-mt-5 tw-mb-10">
+                        <Link href='package/create' style={{ textDecoration: 'none' }}>
+                            <Paper elevation={2} sx={{ marginRight: '2rem', padding: '1rem', height: "13rem", width: "16rem", borderRadius: "0.8rem" }}>
+                                <div className="tw-h-full tw-flex tw-flex-col tw-items-center tw-justify-around">
+                                    <AddIcon sx={{ fontSize: "5rem", color: "#2B7FD4" }} />
+                                    <p className='tw-text-black tw-m-0'>Start a blank Bank Question</p>
                                 </div>
-                                <div className="card-footer">
-                                    <Pagination links={packages?.links} />
+                            </Paper>
+                        </Link>
+                        <Link href='#' style={{ textDecoration: 'none' }}>
+                            <Paper elevation={2} sx={{ padding: '1rem', height: "13rem", width: "13rem", borderRadius: "0.8rem" }}>
+                                <div className="tw-h-full tw-flex tw-flex-col tw-items-center tw-justify-around">
+                                    <SaveAltIcon sx={{ fontSize: "3.5rem", color: "#64398B" }} />
+                                    <p className='tw-text-black tw-m-0'>Import from your file</p>
                                 </div>
+                            </Paper>
+                        </Link>
+                    </div>
+                    <div className="card-table-content">
+                        <h1 className='tw-text-3xl tw-font-bold tw-my-5 tw-text-black tw-m-0'>Make from your Draft</h1>
+                        <div className="card-table-wrapper tw-py-5 tw-px-8 tw-bg-white tw-rounded-xl">
+                            <div className="table-title tw-flex tw-justify-between tw-items-center">
+                                <h2 className='tw-text-2xl tw-font-bold tw-text-black tw-m-0'>Draft Details</h2>
+                                <button className='tw-bg-primary3 tw-rounded-md tw-px-12 tw-py-2 tw-text-white tw-text-xs tw-font-light'>See all</button>
                             </div>
+                            <div className="table-content tw-my-5">
+                                <DraftTable table_data={packages} showed_data={["title", "code", "created_at"]} table_action={3} pathDetail={pathDetailPackage} pathEdit={pathEditPackage} handleOpenDelete={(package_id) => setSelectedItem(package_id)} />
+                            </div>
+                            <Pagination links={packages?.links} />
                         </div>
                     </div>
                 </div>
