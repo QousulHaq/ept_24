@@ -3,9 +3,11 @@
 @section('app')
   <div class="main-wrapper">
     @stack('modal')
-    <nav class="navbar navbar-expand-lg main-navbar bg-primary">
-      @include('partials.app.topnav')
-    </nav>
+    <div class="tw-border-b-2 tw-w-fit tw-h-fit">
+      <nav class="navbar navbar-expand-lg main-navbar bg-white">
+        @include('partials.app.topnav')
+      </nav>
+    </div>
     <div class="main-sidebar">
       @include('partials.app.sidebar')
     </div>

@@ -37,6 +37,21 @@ class ScheduleRoute extends BaseRoute
             'as' => $this->name('edit'),
             'uses' => $this->uses('edit'),
         ]);
+
+        $this->router->patch($this->prefix('{exam}'), [
+            'as' => $this->name('update'),
+            'uses' => $this->uses('update'),
+        ]);
+
+        $this->router->post($this->prefix, [
+            'as' => $this->name('store'),
+            'uses' => $this->uses('store'),
+        ]);
+
+        $this->router->get($this->prefix('participant'), [
+            'as' => $this->name('participant'),
+            'uses' => $this->uses('participant'),
+        ]);
     }
 
     /**

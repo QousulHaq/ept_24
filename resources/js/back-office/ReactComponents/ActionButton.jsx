@@ -15,7 +15,7 @@ function LoadingDialog({ open }) {
     )
 }
 
-const ActionButton = ({ title, text, link, buttonText, colorButton, disabled = false, status }) => {
+const ActionButton = ({ title, text, link, buttonText, colorButton, disabled = false, status, method = "get", data }) => {
 
     const [loading, setLoading] = useState(false)
 
@@ -31,7 +31,19 @@ const ActionButton = ({ title, text, link, buttonText, colorButton, disabled = f
         }).then((result) => {
             if (result.isConfirmed) {
                 setLoading(true)
-                Inertia.visit(link);
+                switch (method) {
+                    case "get":
+                        Inertia.visit(link)
+                        break;
+                    case "patch":
+                        Inertia.patch(link, data)
+                        break;
+                    case "post":
+                        Inertia.post(link, data)
+                        break;
+                    default:
+                        break;
+                }
             }
         });
     }
@@ -51,7 +63,7 @@ const ActionButton = ({ title, text, link, buttonText, colorButton, disabled = f
     return (
         <>
             <LoadingDialog open={loading} />
-            <button disabled={disabled} className={`tw-bg-${colorButton}-500 tw-text-white tw-rounded-full tw-px-3 tw-py-1 ${disabled && "tw-opacity-40"}`} style={{ textDecoration: "none" }} onClick={() => sweetAlertHandler()}>{buttonText}</button>
+            <button disabled={disabled ? disabled : loading ? true : false} className={`tw-bg-${colorButton}-500 tw-text-white tw-rounded-full tw-px-3 tw-py-1 ${disabled && "tw-opacity-40"}`} style={{ textDecoration: "none" }} onClick={() => sweetAlertHandler()}>{buttonText}</button>
         </>
     )
 }

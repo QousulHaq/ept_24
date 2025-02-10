@@ -1,7 +1,7 @@
 <template>
   <li class="dropdown dropdown-list-toggle">
     <a href="#" data-toggle="dropdown" :class="iconClasses" aria-expanded="false">
-      <i class="far fa-bell"></i>
+      <i class="far fa-bell tw-text-black"></i>
     </a>
     <div class="dropdown-menu dropdown-list dropdown-menu-right">
       <div class="dropdown-header">Notifications

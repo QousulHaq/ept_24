@@ -182,6 +182,7 @@ export default {
       return this.selectedParticipants.findIndex(selectedParticipant => selectedParticipant.hash === participant.hash) > -1
     },
     getParticipants: _.debounce(function () {
+      console.log(this.participantQuery)
       this.request('api.back-office.user.participant', {
         keyword: this.participantQuery
       }, null, false).then(response => {

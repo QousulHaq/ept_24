@@ -1,7 +1,7 @@
 <aside id="sidebar-wrapper">
-  <div class="sidebar-brand">
+  <div class="sidebar-brand tw-p-5">
     {{-- <a href="">{{ env('APP_NAME') }}</a> --}}
-    <img src="{{asset('assets\img\logo.svg')}}" alt="">
+    <img src="{{asset('assets\img\logo.svg')}}" alt="" class="tw-ml-5">
   </div>
 
   <div class="sidebar-brand sidebar-brand-sm">
@@ -9,17 +9,56 @@
   </div>
 
   <ul class="sidebar-menu">
-    <li class="{{ request()->is('back-office/dashboard') ? ' active' : '' }}"><a class="nav-link" href="{{ route('back-office.dashboard') }}"><i class="fas fa-columns"></i> <span>Home</span></a></li>
+
+    <li class="">
+      <a class="nav-link" href="{{ route('back-office.dashboard') }}" style="padding-left: 0;">
+        <div class="nav-link-decoration {{ request()->is('back-office/dashboard') ? 'tw-bg-primary3' : 'tw-bg-white' }} tw-h-full tw-p-1.5 tw-mr-2 tw-rounded-r-md"></div>
+        <div class="{{ request()->is('back-office/dashboard') ? 'tw-bg-primary3 tw-text-white' : 'tw-bg-white tw-text-black' }} tw-h-full tw-w-full tw-p-3 tw-rounded-md tw-flex tw-justify-center tw-items-center">
+          <i class="fas fa-columns"></i><span style="margin-top: 0; font-weight: 400; font-size: small;">Home</span>
+        </div>
+      </a>
+    </li>
+
     @if(auth()->user()->can('package.manage'))
-      <li class="{{ request()->is('back-office/package*') ? 'active' : '' }}"><a href="{{ route('back-office.package.index') }}"><i class="fas fa-book"></i> <span>My Bank Questions</span></a></li>
+      <li class="">
+        <a class="nav-link" href="{{ route('back-office.package.index') }}" style="padding-left: 0;">
+          <div class="nav-link-decoration {{ request()->is('back-office/package*') ? 'tw-bg-primary3' : 'tw-bg-white' }} tw-h-full tw-p-1.5 tw-mr-2 tw-rounded-r-md"></div>
+          <div class="{{ request()->is('back-office/package*') ? 'tw-bg-primary3 tw-text-white' : 'tw-bg-white tw-text-black' }} tw-h-full tw-w-full tw-p-3 tw-rounded-md tw-flex tw-justify-center tw-items-center">
+            <i class="fas fa-book"></i><span style="margin-top: 0; font-weight: 400; font-size: small;">My Bank Questions</span>
+          </div>
+        </a>
+      </li>
     @endif
+
     @can('attachment.manage')
-    <li class="{{ request()->is('back-office/attachment') ? ' active' : '' }}"><a class="nav-link" href="{{ route('back-office.attachment') }}"><i class="fas fa-file"></i> <span>Attachment</span></a></li>
+      <li class="">
+        <a class="nav-link" href="{{ route('back-office.attachment') }}" style="padding-left: 0;">
+          <div class="nav-link-decoration {{ request()->is('back-office/attachment') ? 'tw-bg-primary3' : 'tw-bg-white' }} tw-h-full tw-p-1.5 tw-mr-2 tw-rounded-r-md"></div>
+          <div class="{{ request()->is('back-office/attachment') ? 'tw-bg-primary3 tw-text-white' : 'tw-bg-white tw-text-black' }} tw-h-full tw-w-full tw-p-3 tw-rounded-md tw-flex tw-justify-center tw-items-center">
+            <i class="fas fa-file"></i><span style="margin-top: 0; font-weight: 400; font-size: small;">Attachment</span>
+          </div>
+        </a>
+      </li>
     @endcan
 
     @can('exam.manage')
-    <li class="{{ request()->is('back-office/schedule*') ? 'active' : '' }}"><a href="{{ route('back-office.schedule.index') }}"><i class="fas fa-clock"></i> <span>Schedules</span></a></li>
-    <li class="{{ request()->is('back-office/monitor*') ? 'active' : '' }}"><a href="{{ route('back-office.monitor.index') }}"><i class="fas fa-eye"></i> <span>Monitoring</span></a></li>
+      <li class="">
+        <a class="nav-link" href="{{ route('back-office.schedule.index') }}" style="padding-left: 0;">
+          <div class="nav-link-decoration {{ request()->is('back-office/schedule*') ? 'tw-bg-primary3' : 'tw-bg-white' }} tw-h-full tw-p-1.5 tw-mr-2 tw-rounded-r-md"></div>
+          <div class="{{ request()->is('back-office/schedule*') ? 'tw-bg-primary3 tw-text-white' : 'tw-bg-white tw-text-black' }} tw-h-full tw-w-full tw-p-3 tw-rounded-md tw-flex tw-justify-center tw-items-center">
+            <i class="fas fa-clock"></i><span style="margin-top: 0; font-weight: 400; font-size: small;">Schedules</span>
+          </div>
+        </a>
+      </li>
+
+      <li class="">
+        <a class="nav-link" href="{{ route('back-office.monitor.index') }}" style="padding-left: 0;">
+          <div class="nav-link-decoration {{ request()->is('back-office/monitor*') ? 'tw-bg-primary3' : 'tw-bg-white' }} tw-h-full tw-p-1.5 tw-mr-2 tw-rounded-r-md"></div>
+          <div class="{{ request()->is('back-office/monitor*') ? 'tw-bg-primary3 tw-text-white' : 'tw-bg-white tw-text-black' }} tw-h-full tw-w-full tw-p-3 tw-rounded-md tw-flex tw-justify-center tw-items-center">
+            <i class="fas fa-eye"></i><span style="margin-top: 0; font-weight: 400; font-size: small;">Monitoring</span>
+          </div>
+        </a>
+      </li>
     @endcan
     
     {{-- <li class="menu-header">Exams</li>
