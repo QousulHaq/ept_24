@@ -3,6 +3,7 @@ import React, { useEffect } from 'react'
 import { Paper } from '@mui/material'
 
 import AddIcon from '@mui/icons-material/Add';
+import Divider from '@mui/material/Divider';
 
 import DraftTable from '../../ReactComponents/DraftTable';
 // import TableFilterTool from '@components/TableFilterTool';
@@ -26,9 +27,6 @@ function Index({ schedule, flash }) {
         }
     }, [flash])
 
-    const pathDetailSchedule = (schedule_id) => `/back-office/schedule/${schedule_id}/detail`
-    const pathEditSchedule = (schedule_id) => `/back-office/schedule/${schedule_id}/edit`
-
     return (
         <div className='new-bank-soal'>
             <div className="new-bank-soal-wrap tw-pt-5" style={{ width: "100%", height: "100%" }}>
@@ -51,7 +49,24 @@ function Index({ schedule, flash }) {
                         {/* <TableFilterTool /> */}
                     </div>
                     <div className="table-content">
-                        <DraftTable table_data={schedule} showed_data={["name", "scheduled_at", "started_at", "updated_at"]} table_action={4} color="secondary5" pathDetail={pathDetailSchedule} pathEdit={pathEditSchedule} />
+                        <DraftTable
+                            table_data={schedule}
+                            showed_data={["name", "scheduled_at", "started_at", "updated_at"]}
+                            color="secondary5"
+                            action_button={
+                                (row) => (
+                                    <div className="action-button-wrapper tw-w-fit tw-flex tw-justify-center tw-items-center tw-border tw-border-primary3 tw-mx-auto tw-rounded-xl tw-p-1">
+                                        <Link className="action-button tw-w-fit tw-bg-primary3 tw-text-white tw-py-1 tw-px-4 tw-mx-auto tw-rounded-full tw-no-underline" href={`/back-office/schedule/${row.id}/detail`}>
+                                            Detail
+                                        </Link>
+                                        <Divider orientation="vertical" flexItem sx={{ borderWidth: "0.px", borderColor: "#2B7FD4", margin: "0 0.25rem" }} />
+                                        <Link className="action-button tw-w-fit tw-bg-yellow-500 tw-text-white tw-py-1 tw-px-4 tw-mx-auto tw-rounded-full" href={`/back-office/schedule/${row.id}/edit`}>
+                                            Edit
+                                        </Link>
+                                    </div>
+                                )
+                            }
+                        />
                     </div>
                 </div>
             </div>

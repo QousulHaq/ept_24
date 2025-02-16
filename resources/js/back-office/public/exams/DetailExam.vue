@@ -241,6 +241,7 @@ export default {
           this.$forceUpdate()
         })
         .listenForWhisper('security', (kind) => {
+          console.log("Event keamanan:", kind);
           switch (kind.type) {
             case 'mouseleave':
               this.sendLog(kind.hash, 'possible open another window!', ['security', 'mouseleave'])
@@ -252,9 +253,12 @@ export default {
       return this.exam.participants.find(p => p.hash === hash)
     },
     sendLog(userHash, content, tags = []) {
-      if (userHash) {
-        return
-      }
+      console.log("sendLog dipanggil dengan konten:", content, "dan tags:", tags);
+      // if (userHash) { 
+      //   return
+      // }
+
+      // console.log("ini konten yang dikirim", content)
 
       this.request('api.back-office.exam.participant.log', {
         exam: this.exam.id,
@@ -267,10 +271,12 @@ export default {
 
     },
     getExam(withLoading = true) {
+      console.log("isi dari state", this.state);
       this.request('api.back-office.exam.show', {exam: this.examId}, {
         params: this.state
       }, withLoading)
         .then(response => {
+          console.log("Data ujian yang diterima:", response.data);
           this.exam = response.data
         })
     },

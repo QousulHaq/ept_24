@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import DraftTable from '../ReactComponents/DraftTable';
 import Pagination from '../ReactComponents/Pagination'
 
+import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
+
 import "../../../../public/css/back-office/attachment.css"
 
 const AttachmentModal = ({ attachments, setOpen, selectedAttachment }) => {
@@ -51,7 +53,19 @@ function Attachment({ attachments }) {
                     <div className="filter-button-page tw-my-5">
                     </div>
                     <div className="table-content">
-                        <DraftTable table_data={attachments} showed_data={["title", "mime", "type"]} color="secondary7" table_action={1} handleOpenDelete={(attachment_id) => setSelectedAttachment(attachment_id)} />
+                        <DraftTable
+                            table_data={attachments}
+                            showed_data={["title", "mime", "type"]}
+                            color="secondary7"
+                            action_button={
+                                (row) => (
+                                    <div className="action-button-wrapper tw-w-fit tw-flex tw-justify-center tw-items-center tw-border tw-border-primary3 tw-mx-auto tw-rounded-md">
+                                        <button className='tw-px-3 tw-py-2 hover:tw-bg-slate-200' onClick={() => setSelectedAttachment(row.id)}>
+                                            <VisibilityRoundedIcon fontSize='small' color='secondary' />
+                                        </button>
+                                    </div>
+                                )}
+                        />
                     </div>
                     <Pagination links={attachments?.links} />
                 </div>

@@ -18,7 +18,7 @@ mix.sass('resources/style/back-office/app.scss', 'public/css/back-office', {}, [
 	postCss: [require('autoprefixer')],
 });
 
-mix.js('resources/js/back-office/app.js', 'public/js/back-office').vue().react().version();
+mix.js('resources/js/back-office/app.js', 'public/js/back-office').react().version();
 
 mix.webpackConfig({
 	stats: "minimal",

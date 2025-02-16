@@ -37,7 +37,10 @@ class MonitorController extends Controller
     {
         $query = Exam::query();
 
-        $query->where('scheduled_at', '<=', Carbon::now())->where(fn (Builder $builder) => $builder->where('ended_at', '>', Carbon::now())->orWhereNull('ended_at'));
+        $query->where('scheduled_at', '<=', Carbon::now())
+                    ->where(fn (Builder $builder) => $builder
+                        ->where('ended_at', '>', Carbon::now())
+                        ->orWhereNull('ended_at'));
 
         $query->latest();
         $monitor = $query->paginate();

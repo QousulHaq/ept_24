@@ -2,19 +2,22 @@ import React, { useEffect, useState } from 'react'
 
 import DraftTable from '../../ReactComponents/DraftTable'
 import ActionButton from '../../ReactComponents/ActionButton';
+import SearchBar from '../../ReactComponents/SearchBar';
 
 import { Grid2, Chip } from '@mui/material'
 import SchoolIcon from '@mui/icons-material/School';
 
 import moment from 'moment';
 
-const Edit = ({ exam, packages, participants, new_participants }) => {
+const Edit = ({ exam, packages, participants }) => {
 
     const [name, setName] = useState(exam?.name)
     const [selectedPackage, setSelectedPackage] = useState(exam?.package_id)
-    const [participantData, setParticipantData] = useState(new_participants || participants)
+    const [participantData, setParticipantData] = useState(participants)
     const [scheduledDate, setScheduledDate] = useState(moment(exam?.scheduled_at).format("YYYY-MM-DD"))
     const [scheduledTime, setScheduledTime] = useState(moment(exam?.scheduled_at).format("HH:mm"))
+
+    const [loadingTable, setLoadingTable] = useState(false)
 
     const [selectedParticipants, setSelectedParticipants] = useState(exam?.participants)
 
@@ -22,7 +25,6 @@ const Edit = ({ exam, packages, participants, new_participants }) => {
         console.log(exam)
         console.log(packages)
         console.log(participants)
-        console.log("ini new", new_participants)
     }, [])
 
     const handleSelectParticipant = (hash) => {
@@ -105,7 +107,29 @@ const Edit = ({ exam, packages, participants, new_participants }) => {
                                 </div>
                             </Grid2>
                             <Grid2 size={12}>
-                                <DraftTable table_data={participantData} showed_data={["username", "email"]} table_action={7} handleSelectParticipant={(hash) => handleSelectParticipant(hash)} selectedParticipants={selectedParticipants} isSearchBar={true}/>
+                                <DraftTable
+                                    table_data={participantData}
+                                    showed_data={["username", "email"]}
+                                    isSearchBar={true}
+                                    action_button={
+                                        (row) => (
+                                            <div className="action-button-wrapper tw-w-fit tw-flex tw-justify-center tw-items-center tw-border tw-border-primary3 tw-mx-auto tw-rounded-xl tw-p-1">
+                                                <button
+                                                    disabled={selectedParticipants.map(item => item.hash).includes(row.hash) ? true : false}
+                                                    className={`action-button tw-w-fit tw-bg-green-500 tw-text-white tw-py-1 tw-px-4 tw-mx-auto tw-rounded-full ${selectedParticipants.map(item => item.hash).includes(row.hash) ? 'tw-cursor-not-allowed tw-opacity-40' : ''}`}
+                                                    onClick={() => {
+                                                        handleSelectParticipant(row.hash)
+                                                    }}>
+                                                    Add
+                                                </button>
+                                            </div>
+                                        )
+                                    }
+                                    searchBar={
+                                        <SearchBar handleLoadingData={(status) => setLoadingTable(status)} handleSearchedData={(value) => setParticipantData(value)} />
+                                    }
+                                    loadingSearch={loadingTable}
+                                />
                             </Grid2>
                         </Grid2>
                     </Grid2>

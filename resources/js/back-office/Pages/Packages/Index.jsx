@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
 
-import { Paper } from '@mui/material'
+import { Paper, Divider } from '@mui/material'
 
 import AddIcon from '@mui/icons-material/Add';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 
 import DraftTable from '../../ReactComponents/DraftTable';
 import Pagination from '../../ReactComponents/Pagination'
@@ -15,9 +18,6 @@ import { Link } from '@inertiajs/inertia-react'
 
 function Index({ packages }) {
     const [seletedItems, setSelectedItem] = useState(null)
-
-    const pathDetailPackage = (package_id, subpackage_id) => `/back-office/package/${package_id}?subpackage=${subpackage_id}`
-    const pathEditPackage = (package_id, subpackage_id) => `/back-office/package/${package_id}/edit`
 
     useEffect(() => {
         console.log(packages)
@@ -58,7 +58,27 @@ function Index({ packages }) {
                                 <button className='tw-bg-primary3 tw-rounded-md tw-px-12 tw-py-2 tw-text-white tw-text-xs tw-font-light'>See all</button>
                             </div>
                             <div className="table-content tw-my-5">
-                                <DraftTable table_data={packages} showed_data={["title", "code", "created_at"]} table_action={3} pathDetail={pathDetailPackage} pathEdit={pathEditPackage} handleOpenDelete={(package_id) => setSelectedItem(package_id)} />
+                                <DraftTable
+                                    table_data={packages}
+                                    showed_data={["title", "code", "created_at"]}
+                                    action_button={
+                                        (row) => (
+                                            <div className="action-button-wrapper tw-w-fit tw-flex tw-justify-center tw-items-center tw-border tw-border-primary3 tw-mx-auto tw-rounded-md">
+                                                <Link className='tw-px-3 tw-py-2 hover:tw-bg-slate-200' href={`/back-office/package/${row.id}?subpackage=${row.children[0].id}`}>
+                                                    <VisibilityRoundedIcon fontSize='small' color='secondary' />
+                                                </Link>
+                                                <Divider orientation="vertical" flexItem sx={{ borderWidth: "0.px", borderColor: "#2B7FD4" }} />
+                                                <Link className='tw-px-3 tw-py-2 hover:tw-bg-slate-200' href={`/back-office/package/${row.id}/edit`}>
+                                                    <ModeEditIcon fontSize='small' color='primary' />
+                                                </Link>
+                                                <Divider orientation="vertical" flexItem sx={{ borderWidth: "0.px", borderColor: "#2B7FD4" }} />
+                                                <button className='tw-px-3 tw-py-2 hover:tw-bg-slate-200' onClick={() => setSelectedItem(row.id)}>
+                                                    <DeleteOutlineIcon fontSize='small' color='error' />
+                                                </button>
+                                            </div>
+                                        )
+                                    }
+                                />
                             </div>
                             <Pagination links={packages?.links} />
                         </div>
