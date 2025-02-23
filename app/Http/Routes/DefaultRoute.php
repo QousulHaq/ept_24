@@ -21,6 +21,11 @@ class DefaultRoute extends BaseRoute
         ]);
 
         $this->router->view('client', 'client');
+        
+        $this->router->get('client/{any}', function () {
+            return view('client');
+        })->where('any', '.*');
+        
 
         if (config('app.env') === 'local') {
             $this->router->get('debug', function (Request $request) {
