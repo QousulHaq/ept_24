@@ -1,6 +1,9 @@
 import { createBrowserRouter, Navigate } from "react-router-dom"
 
-import App from "../App"
+import RootLayout from "../layouts/RootLayout"
+import ProtectedRoute from "./ProtectedRoute"
+
+import AuthCallback from "../views/AuthCallback"
 import Home from "../views/Home"
 import HasilUjian from "../views/HasilUjian"
 import Pengaturan from "../views/Pengaturan"
@@ -8,34 +11,67 @@ import Presentase from "../views/Presentase"
 import Profile from "../views/Profile"
 import RiwayatUjian from "../views/RiwayatUjian"
 
+
 const router = createBrowserRouter([
     {
         path: "/client",
-        element: <App />,
+        element: <RootLayout />,
         children: [
             {
                 index: true,
-                element: <Home />
+                element: (
+                    <ProtectedRoute>
+                        <Home />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: "callback",
+                element: (
+                    <ProtectedRoute>
+                        <AuthCallback />
+                    </ProtectedRoute>
+                )
             },
             {
                 path: "hasil-ujian",
-                element: <HasilUjian />
+                element: (
+                    <ProtectedRoute>
+                        <HasilUjian />
+                    </ProtectedRoute>
+                )
             },
             {
                 path: "presentase",
-                element: <Presentase />
+                element: (
+                    <ProtectedRoute>
+                        <Presentase />
+                    </ProtectedRoute>
+                )
             },
             {
                 path: "riwayat-ujian",
-                element: <RiwayatUjian />
+                element: (
+                    <ProtectedRoute>
+                        <RiwayatUjian />
+                    </ProtectedRoute>
+                )
             },
             {
                 path: "profile",
-                element: <Profile />
+                element: (
+                    <ProtectedRoute>
+                        <Profile />
+                    </ProtectedRoute>
+                )
             },
             {
                 path: "pengaturan",
-                element: <Pengaturan />
+                element: (
+                    <ProtectedRoute>
+                        <Pengaturan />
+                    </ProtectedRoute>
+                )
             },
         ]
     },

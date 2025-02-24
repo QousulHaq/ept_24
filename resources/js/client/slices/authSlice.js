@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit";
 import queryString from "query-string";
 import _ from "lodash";
-import { isAfter, addSeconds } from "date-fns";
+import { isAfter, addSeconds, format, parseISO } from "date-fns";
 
 import { STATUS, MUTATION as BASE_MUTATION } from "./types";
 import { reset_state as exam_reset_state } from "./examSlice";
@@ -52,7 +52,7 @@ const authSlice = createSlice({
         },
         save_credential: (state, action) => {
             Object.assign(state.credential, action.payload);
-            state.lastFetched = new Date();
+            state.lastFetched = new Date().toISOString();
 
             // ada di echoMiddleware.js
             // Vue.prototype.$echo.connector.pusher.config.auth.headers['Authorization'] = `Bearer ${state.credential.access_token}`
@@ -70,7 +70,7 @@ const authSlice = createSlice({
         save_user: (state, action) => {
             state.user = action.payload
         },
-    }
+    },
 });
 
 // Getter
@@ -79,18 +79,21 @@ const selectAuth = (state) => state.auth;
 
 // Apakah user terautentikasi?
 export const getAuthenticated = createSelector(
-  selectAuth,
-  (auth) => !!auth.credential?.access_token
+    [selectAuth],
+    (auth) => !!auth.credential?.access_token
 );
 
 // Apakah token sudah kedaluwarsa?
 export const getTokenExpired = createSelector(
-  selectAuth,
-  (auth) => {
-    if (!auth.lastFetched) return true;
-    const expiresIn = _.get(auth, 'credential.expires_in', 0);
-    return isAfter(new Date(), addSeconds(auth.lastFetched, expiresIn));
-  }
+    [selectAuth],
+    (auth) => {
+        if (!auth.lastFetched) return true;
+        const expiresIn = _.get(auth, 'credential.expires_in', 0);
+        return isAfter(
+            parseISO(format(new Date(), 'yyyy-MM-dd')), 
+            addSeconds(parseISO(auth.lastFetched), expiresIn)
+        );
+    }
 );
 
 //Thunk
@@ -137,7 +140,9 @@ export const login = createAsyncThunk(
 
         if (state.credential.state === credential?.state) {
             dispatch(save_credential(credential))
+            dispatch({ type: "echo/auth/listenAttendance" })
             const user = await dispatch(getUser())
+            console.log("ini isi dari user", user)
             dispatch({ type: "echo/notification/listen" })
 
             return user

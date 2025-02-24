@@ -58,27 +58,27 @@ const examSlice = createSlice({
 const selectExam = (state) => state.exam;
 
 export const getExamById = (id) => createSelector(
-  selectExam,
+  [selectExam],
   (exam) => exam.matter.data.find((d) => d.id === id)
 );
 
 export const getHasEnrolledExam = createSelector(
-  selectExam,
+  [selectExam],
   (exam) => !!exam.chosenExam
 );
 
 export const getActiveExam = createSelector(
-  selectExam,
+  [selectExam],
   (exam) => exam.matter.data.find((d) => d.id === exam.chosenExam)
 );
 
 export const getIsStarted = createSelector(
-  getActiveExam,
+  [getActiveExam],
   (activeExam) => !!_.get(activeExam, 'started_at') || _.get(activeExam, 'is_anytime', false)
 );
 
 export const getIsBanned = createSelector(
-  getActiveExam,
+  [getActiveExam],
   (activeExam) => _.get(activeExam, 'detail.status') === 'banned'
 );
 

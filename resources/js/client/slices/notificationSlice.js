@@ -30,7 +30,6 @@ const notificationSlice = createSlice({
 export const addNotification = createAsyncThunk(
     "notification/addNotification",
     async (notification, { dispatch }) => {
-        console.log("ini dari thunk notification", notification)
         if (notification.save)
             dispatch(add_notification(notification))
     }

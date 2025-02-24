@@ -130,7 +130,7 @@ const performSlice = createSlice({
 const selectPerform = (state) => state.perform;
 
 export const getSection = createSelector(
-    selectPerform,
+    [selectPerform],
     (perform) => perform.matter.sections
 );
 
@@ -171,12 +171,12 @@ export const getItemDuration = createSelector(
 );
 
 export const getIsDone = createSelector(
-    getSection,
+    [getSection],
     (sections) => sections.every((s) => _.get(s, 'ended_at'))
 );
 
 export const getSectionItemsAnswered = createSelector(
-    getSection,
+    [getSection],
     (sections) =>
         sections
             .map((section) =>
@@ -188,7 +188,7 @@ export const getSectionItemsAnswered = createSelector(
 );
 
 export const getItemLoadedPercentage = createSelector(
-    selectPerform,
+    [selectPerform],
     (perform) => parseInt((perform.items_count.loaded / perform.items_count.total) * 100)
 );
 
