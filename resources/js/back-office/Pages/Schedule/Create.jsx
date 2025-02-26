@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 
 import DraftTable from '../../ReactComponents/DraftTable'
 import ActionButton from '../../ReactComponents/ActionButton';
+import SearchBar from '../../ReactComponents/SearchBar';
 
 import { Grid2, Chip } from '@mui/material'
 import SchoolIcon from '@mui/icons-material/School';
@@ -14,8 +15,10 @@ const Create = ({ packages, participants }) => {
     const [selectedPackage, setSelectedPackage] = useState("")
     const [scheduledDate, setScheduledDate] = useState("")
     const [scheduledTime, setScheduledTime] = useState("")
+    const [participantData, setParticipantData] = useState(participants)
 
     const [selectedParticipants, setSelectedParticipants] = useState([])
+    const [loadingTable, setLoadingTable] = useState(false)
 
     useEffect(() => {
         console.log(packages)
@@ -74,7 +77,7 @@ const Create = ({ packages, participants }) => {
                                 link={`/back-office/schedule`}
                                 buttonText="Save"
                                 colorButton="green"
-                                method='post'
+                                method="post"
                                 data={{
                                     name,
                                     package_id: selectedPackage,
@@ -102,12 +105,29 @@ const Create = ({ packages, participants }) => {
                                 </div>
                             </Grid2>
                             <Grid2 size={12}>
-                                <div className="chip-wrapper tw-flex tw-flex-wrap tw-mb-6">
-                                    
-                                </div>
-                            </Grid2>
-                            <Grid2 size={12}>
-                                <DraftTable table_data={participants} showed_data={["username", "email"]} table_action={7} handleSelectParticipant={(hash) => handleSelectParticipant(hash)} selectedParticipants={selectedParticipants} />
+                                <DraftTable
+                                    table_data={participantData}
+                                    showed_data={["username", "email"]}
+                                    isSearchBar={true}
+                                    action_button={
+                                        (row) => (
+                                            <div className="action-button-wrapper tw-w-fit tw-flex tw-justify-center tw-items-center tw-border tw-border-primary3 tw-mx-auto tw-rounded-xl tw-p-1">
+                                                <button
+                                                    disabled={selectedParticipants.map(item => item.hash).includes(row.hash) ? true : false}
+                                                    className={`action-button tw-w-fit tw-bg-green-500 tw-text-white tw-py-1 tw-px-4 tw-mx-auto tw-rounded-full ${selectedParticipants.map(item => item.hash).includes(row.hash) ? 'tw-cursor-not-allowed tw-opacity-40' : ''}`}
+                                                    onClick={() => {
+                                                        handleSelectParticipant(row.hash)
+                                                    }}>
+                                                    Add
+                                                </button>
+                                            </div>
+                                        )
+                                    }
+                                    searchBar={
+                                        <SearchBar handleLoadingData={(status) => setLoadingTable(status)} handleSearchedData={(value) => setParticipantData(value)} />
+                                    }
+                                    loadingSearch={loadingTable}
+                                />
                             </Grid2>
                         </Grid2>
                     </Grid2>

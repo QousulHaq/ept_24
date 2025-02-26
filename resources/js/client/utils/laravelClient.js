@@ -95,7 +95,6 @@ class Router {
 
 		if (routes === null) {
 			const { data } = await request;
-            console.log("ini isi dari data di laravelClient", data)
 			routes = data
 		}
 

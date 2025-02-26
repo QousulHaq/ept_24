@@ -142,7 +142,6 @@ export const login = createAsyncThunk(
             dispatch(save_credential(credential))
             dispatch({ type: "echo/auth/listenAttendance" })
             const user = await dispatch(getUser())
-            console.log("ini isi dari user", user)
             dispatch({ type: "echo/notification/listen" })
 
             return user

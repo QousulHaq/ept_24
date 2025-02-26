@@ -13,9 +13,6 @@ const echoMiddleware = ({ dispatch, getState }) => (next) => (action) => {
     }
     
     const echo = getEchoInstance(authToken);
-    console.log("dari echoMiddleware")
-    console.log(authToken)
-    console.log(echo)
     
     // echo.connector.pusher.config.auth.headers['Authorization'] = `Bearer ${authToken}`
     // echo.connector.pusher.config.auth.headers['Accept'] = 'application/json'
@@ -38,6 +35,7 @@ const echoMiddleware = ({ dispatch, getState }) => (next) => (action) => {
 
         case "echo/notification/listen":
             echo.private('notification.' + state.auth.user.username).notification((notification) => {
+                console.log(notification)
                 dispatch(addNotification(notification))
             })
             break;

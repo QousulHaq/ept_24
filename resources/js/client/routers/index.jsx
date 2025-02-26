@@ -10,6 +10,7 @@ import Pengaturan from "../views/Pengaturan"
 import Presentase from "../views/Presentase"
 import Profile from "../views/Profile"
 import RiwayatUjian from "../views/RiwayatUjian"
+import ExamDetail from "../views/ExamDetail"
 
 
 const router = createBrowserRouter([
@@ -17,6 +18,14 @@ const router = createBrowserRouter([
         path: "/client",
         element: <RootLayout />,
         children: [
+            {
+                path: "callback",
+                element: (
+                    <ProtectedRoute>
+                        <AuthCallback />
+                    </ProtectedRoute>
+                )
+            },
             {
                 index: true,
                 element: (
@@ -26,11 +35,15 @@ const router = createBrowserRouter([
                 )
             },
             {
-                path: "callback",
+                path: "exam/:id",
                 element: (
-                    <ProtectedRoute>
-                        <AuthCallback />
-                    </ProtectedRoute>
+                    <ExamDetail />
+                )
+            },
+            {
+                path: "perform",
+                element: (
+                    <ExamDetail />
                 )
             },
             {

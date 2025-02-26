@@ -31,18 +31,7 @@ const store = configureStore({
     reducer: persistedReducer,
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
-            serializableCheck: {
-                // Abaikan action tertentu agar tidak memeriksa serialisasi
-                ignoredActions: [
-                    "echo/auth/listenAttendance",
-                    "echo/notification/listen",
-                    "echo/exam/listenToExamChannel",
-                    "echo/exam/windowLeavingCheckerInit",
-                ],
-                // Abaikan jalur state yang mengandung non-serializable value
-                ignoredPaths: ["echo"],
-                ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"], //ada error kalau ini kalau dihapus
-            },
+            serializableCheck: false,
         }).concat(echoMiddleware),
     devTools: process.env.NODE_ENV !== "production", // Aktifkan Redux DevTools di mode pengembangan
 });

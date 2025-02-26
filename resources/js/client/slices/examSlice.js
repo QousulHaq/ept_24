@@ -7,6 +7,7 @@ export const MUTATION = {
     ...BASE_MUTATION,
     CHANGE_PARAMS: 'change_params',
     CHANGE_MATTER: 'change_matter',
+    CHANGE_FUTURE_MATTER: 'change_future_matter',
     ENROLLED_EXAM: 'enrolled_exam',
     SET_ROOM: 'set_room',
 };
@@ -17,7 +18,10 @@ const defaultState = {
         state: 'running'
     },
     matter: {
-        data: []
+        data: [],
+    },
+    future_matter: {
+        data: [],
     },
     chosenExam: null,
     token: {
@@ -43,6 +47,9 @@ const examSlice = createSlice({
         change_matter: (state, action) => {
             Object.assign(state.matter, action.payload)
         },
+        change_future_matter: (state, action) => {
+            Object.assign(state.future_matter, action.payload)
+        },
         enrolled_exam: (state, action) => {
             state.chosenExam = action.payload.examId
             Object.assign(state.token, action.payload.token)
@@ -58,28 +65,28 @@ const examSlice = createSlice({
 const selectExam = (state) => state.exam;
 
 export const getExamById = (id) => createSelector(
-  [selectExam],
-  (exam) => exam.matter.data.find((d) => d.id === id)
+    [selectExam],
+    (exam) => exam.matter.data.find((d) => d.id === id)
 );
 
 export const getHasEnrolledExam = createSelector(
-  [selectExam],
-  (exam) => !!exam.chosenExam
+    [selectExam],
+    (exam) => !!exam.chosenExam
 );
 
 export const getActiveExam = createSelector(
-  [selectExam],
-  (exam) => exam.matter.data.find((d) => d.id === exam.chosenExam)
+    [selectExam],
+    (exam) => exam.matter.data.find((d) => d.id === exam.chosenExam)
 );
 
 export const getIsStarted = createSelector(
-  [getActiveExam],
-  (activeExam) => !!_.get(activeExam, 'started_at') || _.get(activeExam, 'is_anytime', false)
+    [getActiveExam],
+    (activeExam) => !!_.get(activeExam, 'started_at') || _.get(activeExam, 'is_anytime', false)
 );
 
 export const getIsBanned = createSelector(
-  [getActiveExam],
-  (activeExam) => _.get(activeExam, 'detail.status') === 'banned'
+    [getActiveExam],
+    (activeExam) => _.get(activeExam, 'detail.status') === 'banned'
 );
 
 // Thunk
@@ -103,6 +110,21 @@ export const fetchExam = createAsyncThunk(
         dispatch(change_status(STATUS.IDLE))
         if (res.status === 200) {
             dispatch(change_matter(res.data))
+            return res
+        }
+    }
+)
+
+export const fetchFutureExam = createAsyncThunk(
+    "exam/fetchFutureExam",
+    async (_, { dispatch, getState }) => {
+        const state = getState().exam
+
+        dispatch(change_status(STATUS.FETCHING))
+        const res = await laravelClient.request('api.client.exam', {state : "future"})
+        dispatch(change_status(STATUS.IDLE))
+        if (res.status === 200) {
+            dispatch(change_future_matter(res.data))
             return res
         }
     }
@@ -148,6 +170,7 @@ export const {
     change_status,
     change_params,
     change_matter,
+    change_future_matter,
     enrolled_exam,
     set_room
 } = examSlice.actions

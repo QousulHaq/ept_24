@@ -1,9 +1,12 @@
 import React from 'react'
+import { useSelector } from 'react-redux';
 
 import SearchIcon from '@mui/icons-material/Search';
 import { Avatar, InputBase, Grid2 } from '@mui/material'
 
 function Upbar() {
+
+  const username = useSelector((state) => state.auth.user.name)
   
   return (
     <div className="tw-border-b tw-border-neutral4 tw-p-10 tw-pt-3 tw-pb-2">
@@ -32,7 +35,7 @@ function Upbar() {
               <Avatar sx={{ width: 35, height: 35 }} >F</Avatar>
             </div>
             <div className="account-name">
-              <p className='tw-text-sm tw-font-semibold '>John Doe</p>
+              <p className='tw-text-sm tw-font-semibold '>{username}</p>
               <p className='tw-text-xs tw-font-light'>Student</p>
             </div>
           </div>

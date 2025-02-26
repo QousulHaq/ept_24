@@ -22,12 +22,6 @@ function App() {
     const hasEnrolledExam = useSelector(getHasEnrolledExam)
 
     useEffect(() => {
-        console.log({
-            isAuthenticated,
-            token,
-            username,
-            hasEnrolledExam
-        })
         if (isAuthenticated) {
             const echo = getEchoInstance(token)
 
@@ -47,18 +41,6 @@ function App() {
                 return 'Avoid reloading page during the exam.';
             };
         }
-
-        // if (token) {
-        //     fetch("http://localhost:8000/api", {
-        //         headers: {
-        //             Authorization: `Bearer ${token}`,
-        //         },
-        //     })
-        //         .then((res) => res.json())
-        //         .then(console.log)
-        //         .catch(console.error);
-            
-        // }
     }, [])
 
     return (
