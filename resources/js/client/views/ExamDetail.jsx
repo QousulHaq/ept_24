@@ -11,6 +11,7 @@ import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined';
 import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
 
 import { getExamById, enroll } from '../slices/examSlice';
+import store from '../slices/store';
 
 
 const ExamDetail = () => {
@@ -95,9 +96,9 @@ const ExamDetail = () => {
                                     <>
                                         {
                                             isFullScreen ?
-                                                <button className={`tw-bg-primary1 tw-py-2 tw-px-4 tw-rounded-full tw-text-white tw-text-base tw-h-fit`}>{"Click Here to Start"}</button>
+                                                <button onClick={enterExam} className={`tw-bg-primary1 tw-py-2 tw-px-4 tw-rounded-full tw-text-white tw-text-base tw-h-fit`}>{"Click Here to Start"}</button>
                                                 :
-                                                <button onClick={() => toFullScreen()} className={`tw-bg-primary1 tw-py-2 tw-px-4 tw-rounded-full tw-text-white tw-text-base tw-h-fit`}>{"Set Fullscreen"}</button>
+                                                <button onClick={toFullScreen} className={`tw-bg-primary1 tw-py-2 tw-px-4 tw-rounded-full tw-text-white tw-text-base tw-h-fit`}>{"Set Fullscreen"}</button>
                                         }
                                     </>
                                     :

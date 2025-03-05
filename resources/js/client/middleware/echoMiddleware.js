@@ -2,6 +2,7 @@ import { save_active_users, add_active_user, remove_active_user, change_connecti
 import { addNotification } from "../slices/notificationSlice";
 import { checkQualifiedStatus, fetchExam } from "../slices/examSlice";
 import { getEchoInstance } from "../utils/echoServices";
+import { showSnackbar } from "../slices/snackbarSlice";
 
 const echoMiddleware = ({ dispatch, getState }) => (next) => (action) => {
     const state = getState();
@@ -51,14 +52,11 @@ const echoMiddleware = ({ dispatch, getState }) => (next) => (action) => {
             break;
 
         case "echo/exam/windowLeavingCheckerInit":
-            const room_leaving_checker = echo.connector.channels['private:exam.' + state.exam.chosenExam]
+            const room_leaving_checker = echo.connector.channels['presence-exam.' + state.exam.chosenExam]
 
             document.documentElement.onmouseleave = () => {
-                console.log({
-                    message: 'you\'re opening another window.',
-                    description: 'Proctor notice it.',
-                    placement: 'bottomLeft'
-                });
+
+                dispatch(showSnackbar({message : "you\'re opening another window.", severity : "warning"}))
 
                 room_leaving_checker.whisper('security', {
                     hash: state.auth.user.hash,

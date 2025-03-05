@@ -68,7 +68,7 @@
 
 // export default laravelClient;
 
-import { stringify } from 'querystring'
+import queryString from 'query-string';
 import { AxiosResponse } from 'axios'
 import axiosInstance from './axiosClient';
 
@@ -88,7 +88,7 @@ class Router {
 	 * @param data : Object
 	 * @returns {Promise<Object>}
 	 */
-	async get (name, data = {}) {
+	async get(name, data = {}) {
 		if (request === null) {
 			request = axiosInstance.get('/api')
 		}
@@ -100,7 +100,7 @@ class Router {
 
 		let result = routes.find(_ => _.name === name);
 
-		if (! result) {
+		if (!result) {
 			throw new Error('Laravel route not found')
 		}
 
@@ -112,7 +112,7 @@ class Router {
 			if (data.hasOwnProperty(key)) {
 				if (result.uri.indexOf('{' + key + '}') !== -1) {
 					Object.assign(result, {
-						uri: result.uri.replace('{' + key + '}', data[key])
+						uri: result.uri.replace(`{${key}}`, encodeURIComponent(data[key]))
 					});
 					delete data[key]
 				} else if (result.method === 'HEAD' || result.method === 'GET') {
@@ -124,7 +124,7 @@ class Router {
 
 		if (Object.values(queryCandidates).length > 0) {
 			Object.assign(result, {
-				uri: result.uri + '?' + stringify(queryCandidates)
+				uri: result.uri + '?' + queryString.stringify(queryCandidates)
 			})
 		}
 
@@ -134,7 +134,7 @@ class Router {
 
 const router = new Router();
 
-const laravelClient  = {
+const laravelClient = {
 	router,
 	/**
 	 * broker that translate laravel route into request

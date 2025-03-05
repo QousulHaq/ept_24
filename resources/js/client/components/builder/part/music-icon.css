@@ -1,0 +1,26 @@
+@keyframes flicker {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.wave {
+    display: none;
+}
+
+.wave.played {
+    display: block;
+}
+
+.flicker-1 {
+    animation: flicker 2s ease alternate infinite;
+    animation-delay: 1s;
+}
+
+.flicker-2 {
+    animation: flicker 2s ease alternate infinite;
+}

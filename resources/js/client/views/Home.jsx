@@ -47,7 +47,7 @@ function Home() {
       <div className={`home-wrap tw-overflow-y-auto tw-bg-white tw-p-10 tw-pb-32`} style={{ width: "100%", height: "100vh" }}>
         <div className="greeter-box tw-w-full tw-py-3 tw-px-5 tw-mb-7 tw-flex tw-justify-between tw-items-center tw-bg-secondary7 tw-rounded-xl">
           {
-            loading ?
+            loading && !username ?
               <div className="greeter-content">
                 <h1 className='tw-text-3xl tw-font-bold tw-text-primary3 tw-mb-2 tw-w-60'>
                   <Skeleton variant='h6' width={"100%"} />
@@ -63,11 +63,9 @@ function Home() {
               </div>
           }
 
-          <img
-            src={buku}
-            onLoad={() => setLoaded(true)}
-          />
-          {!loaded && <Skeleton variant="circular" width={100} height={100} sx={{margin : "1rem"}} />}
+          <img src={buku} onLoad={() => setLoaded(true)} />
+          {!loaded && <Skeleton variant="circular" width={100} height={100} sx={{ margin: "1rem" }} />}
+
         </div>
         <Grid2 container spacing={2}>
           <Grid2 size={8}>

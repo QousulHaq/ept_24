@@ -4,8 +4,8 @@ import { RouterProvider } from 'react-router-dom'
 import router from './routers'
 
 import { useSelector, useDispatch } from 'react-redux'
+import { showSnackbar } from './slices/snackbarSlice'
 
-import { useSnackbar } from './context/SnackbarProvider'
 import { getAuthenticated } from './slices/authSlice'
 import { getHasEnrolledExam, listenToExamChannel } from './slices/examSlice'
 import { getEchoInstance } from './utils/echoServices'
@@ -16,7 +16,6 @@ function App() {
     const dispatch = useDispatch()
 
     const isAuthenticated = useSelector(getAuthenticated)
-    const showSnackbar = useSnackbar()
     const token = useSelector((state) => state.auth?.credential?.access_token)
     const username = useSelector((state) => state.auth?.user?.username)
     const hasEnrolledExam = useSelector(getHasEnrolledExam)
@@ -37,7 +36,7 @@ function App() {
         // Handle onbeforeunload di mode produksi
         if (process.env.NODE_ENV === 'production') {
             window.onbeforeunload = () => {
-                showSnackbar('Please avoid reloading the page!', "warning")
+                dispatch(showSnackbar({message : 'Please avoid reloading the page!', severity : "warning"}))
                 return 'Avoid reloading page during the exam.';
             };
         }

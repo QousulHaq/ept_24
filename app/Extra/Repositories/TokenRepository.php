@@ -19,8 +19,8 @@ class TokenRepository
         $config = app('cbt.jwt.token.config');
 
         return $config->builder()
-            ->issuedBy(env('APP_URL'))
-            ->permittedFor(env('APP_URL'))
+            ->issuedBy(config('app.url'))
+            ->permittedFor(config('app.url'))
             ->identifiedBy($jti)
             ->issuedAt(now()->toDateTimeImmutable())
             ->expiresAt($expiresAt)

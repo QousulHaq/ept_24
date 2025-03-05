@@ -75,4 +75,9 @@ axiosInstance.interceptors.response.use(_ => _, async error => {
     throw error
 })
 
+axiosInstance.interceptors.request.use(request => {
+    console.log('Request:', request);
+    return request;
+});
+
 export default axiosInstance

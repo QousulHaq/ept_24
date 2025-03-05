@@ -6,6 +6,7 @@ import authReducer from "./authSlice";
 import examReducer from "./examSlice";
 import notificationReducer from "./notificationSlice";
 import performReducer from "./performSlice";
+import snackbarReducer from "./snackbarSlice"
 
 import echoMiddleware from "../middleware/echoMiddleware";
 
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
     exam: examReducer,
     notification: notificationReducer,
     perform: performReducer,
+    snackbar : snackbarReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

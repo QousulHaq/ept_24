@@ -45,19 +45,19 @@ const performSlice = createSlice({
         change_matter: (state, action) => {
             Object.assign(state.matter, action.payload)
         },
-        change_active: (state, action) => {
+        change_active: (state, { payload = {} }) => {
             Object.assign(state, {
                 active: {
                     ...state.active,
-                    ...action.payload
+                    ...payload
                 }
             })
         },
-        update_section: (state, action) => {
-            const sectionIndex = state.matter.sections.findIndex(s => s.id === action.payload.id)
+        update_section: (state, { payload = {} }) => {
+            const sectionIndex = state.matter.sections.findIndex(s => s.id === payload.id)
             if (sectionIndex > -1) {
                 let sections = [...state.matter.sections]
-                sections.fill(Object.assign(sections[sectionIndex], action.payload), sectionIndex, sectionIndex + 1)
+                sections.fill(Object.assign(sections[sectionIndex], payload), sectionIndex, sectionIndex + 1)
                 Object.assign(state, {
                     matter: {
                         sections
@@ -65,12 +65,12 @@ const performSlice = createSlice({
                 })
             }
         },
-        update_item: (state, action) => {
+        update_item: (state, { payload = {} }) => {
             const sectionIndex = state.matter.sections.findIndex(s => s.id === state.active.section)
-            if (sectionIndex > -1 && action.payload.hasOwnProperty('id')) {
-                const itemIndex = state.matter.sections[sectionIndex].items.findIndex(i => i.id === action.payload.id)
+            if (sectionIndex > -1 && payload.hasOwnProperty('id')) {
+                const itemIndex = state.matter.sections[sectionIndex].items.findIndex(i => i.id === payload.id)
                 if (itemIndex > -1) {
-                    Object.assign(state.matter.sections[sectionIndex].items[itemIndex], action.payload)
+                    Object.assign(state.matter.sections[sectionIndex].items[itemIndex], payload)
                 } else {
                     console.warn('cannot find item @ mutation update item')
                 }
@@ -79,20 +79,23 @@ const performSlice = createSlice({
         update_attempt: (state, action) => {
             const { sectionId = null, itemId = null, attempt = null } = action.payload;
 
-            if (sectionId === null || itemId === null || !attempt?.id) return;
+            if (sectionId === null || itemId === null || !attempt.hasOwnProperty('id'))
+                return false
 
-            // Cari index dari section, item, dan attempt
-            const sectionIndex = state.matter.sections.findIndex(s => s.id === sectionId);
-            if (sectionIndex === -1) return;
+            const sectionIndex = state.matter.sections.findIndex(s => s.id === sectionId),
+                itemIndex = state.matter.sections[sectionIndex].items.findIndex(i => i.id === itemId),
+                attemptIndex = state.matter.sections[sectionIndex].items[itemIndex]['attempts'].findIndex(a => a.id === attempt.id)
 
-            const itemIndex = state.matter.sections[sectionIndex].items.findIndex(i => i.id === itemId);
-            if (itemIndex === -1) return;
+            if (sectionIndex < 0 || itemIndex < 0 || attemptIndex < 0)
+                return false
 
-            const attemptIndex = state.matter.sections[sectionIndex].items[itemIndex].attempts.findIndex(a => a.id === attempt.id);
-            if (attemptIndex === -1) return;
-
-            // Update attempt yang sesuai
-            state.matter.sections[sectionIndex].items[itemIndex].attempts[attemptIndex] = attempt;
+            const sections = state.matter.sections
+            sections[sectionIndex].items[itemIndex]['attempts'][attemptIndex] = attempt
+            Object.assign(state, {
+                matter: {
+                    sections
+                }
+            })
         },
         sort_matter: (state) => {
             const sections = state.matter.sections
@@ -180,16 +183,22 @@ export const getSectionItemsAnswered = createSelector(
     (sections) =>
         sections
             .map((section) =>
-                section.items
+                section.items ? section.items
                     .filter((item) => item.attempts.some((attempt) => attempt.answer !== null))
-                    .map((item) => item.id)
+                    .map((item) => item.id) : []
             )
             .flat()
 );
 
 export const getItemLoadedPercentage = createSelector(
     [selectPerform],
-    (perform) => parseInt((perform.items_count.loaded / perform.items_count.total) * 100)
+    (perform) => {
+        // Pastikan total bukan 0 dan keduanya adalah angka yang valid
+        if (!perform.items_count.total || isNaN(perform.items_count.loaded) || isNaN(perform.items_count.total)) {
+            return 0; // Atau nilai default lain yang masuk akal
+        }
+        return parseInt((perform.items_count.loaded / perform.items_count.total) * 100);
+    }
 );
 
 // Thunk
@@ -238,7 +247,7 @@ export const postFetchSections = createAsyncThunk(
 
                     const files = item.attachments.map(a => ({ url: a.url, format: mimeToFormat(a.mime) }))
                     try {
-                        await howler.load(files, item.id)
+                        await howler.load(files, item.id) 
                         dispatch(advance_loaded_item_total())
                     } catch (e) {
                         throw new Error("failed load file! : " + JSON.stringify(files))
@@ -318,10 +327,11 @@ export const calculateActive = () => (dispatch, getState) => {
 
 export const saveAnswer = createAsyncThunk(
     'perform/saveAnswer',
-    async ({ itemId = null, itemAnswerId = null, content = null }, { dispatch }) => {
-        const activeItem = getActiveItem()
-        const activeAttempt = getActiveAttempt()
-        const activeSection = getActiveSection()
+    async ({ itemId = null, itemAnswerId = null, content = null }, { dispatch, getState }) => {
+        const state = getState().perform
+        const activeItem = getActiveItem(state)
+        const activeAttempt = getActiveAttempt(state)
+        const activeSection = getActiveSection(state)
 
         if (!activeItem)
             throw new Error("No active item")
@@ -351,7 +361,7 @@ export const saveAnswer = createAsyncThunk(
                 throw new Error(`Item ${itemId} doesn't have answers with id ${itemAnswerId}`)
         }
 
-        const { data: responseData } = await this._vm.laravel.request('api.client.section.item.attempt', {
+        const { data: responseData } = await laravelClient.request('api.client.section.item.attempt', {
             participant_section: activeSection.id,
             section_item: itemId ?? activeItem.id,
             item_attempt: attempt?.id ?? activeAttempt.id,
@@ -373,11 +383,12 @@ export const saveAnswer = createAsyncThunk(
 
 export const saveTime = createAsyncThunk(
     'perform/saveTime',
-    async ({ withMutation = false, gap = 5 }, { dispatch }) => {
+    async ({ withMutation = false, gap = 5 }, { dispatch, getState }) => {
         let res = {}
-        const activeItem = getActiveItem()
-        const activeSection = getActiveSection()
-        const itemDuration = getItemDuration()
+        const state = getState().perform
+        const activeItem = getActiveItem(state)
+        const activeSection = getActiveSection(state)
+        const itemDuration = getItemDuration(state)
 
         try {
             if (itemDuration) {
@@ -404,9 +415,9 @@ export const saveTime = createAsyncThunk(
 
 export const next = (payload) => (dispatch, getState) => {
     const state = getState().perform
-    const activeItem = getActiveItem()
-    const activeSection = getActiveSection()
-    const itemDuration = getItemDuration()
+    const activeItem = getActiveItem(state)
+    const activeSection = getActiveSection(state)
+    const itemDuration = getItemDuration(state)
 
     if (activeSection === null || activeItem === null) {
         console.warn('active.section or active.item is null')
