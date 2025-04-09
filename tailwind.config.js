@@ -8,6 +8,20 @@ module.exports = {
   ],
   theme: {
     extend: {
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            '.alphabet_counter u::before': {
+              counterIncrement: 'uwu',
+              content: '"(" counter(uwu, upper-alpha) ")"',
+              display: 'inline-block',
+              position: 'relative',
+              paddingBottom: '15px',
+              textDecoration: 'none',
+            },
+          },
+        },
+      }),
       fontFamily: {
         sans: ['Poppins', 'sans-serif']
       },

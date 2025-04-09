@@ -36,14 +36,16 @@ function App() {
         // Handle onbeforeunload di mode produksi
         if (process.env.NODE_ENV === 'production') {
             window.onbeforeunload = () => {
-                dispatch(showSnackbar({message : 'Please avoid reloading the page!', severity : "warning"}))
+                dispatch(showSnackbar({ message: 'Please avoid reloading the page!', severity: "warning" }))
                 return 'Avoid reloading page during the exam.';
             };
         }
     }, [])
 
     return (
-        <RouterProvider router={router} />
+        <div className="app-client" style={{ width: "100%", height: "100%", background: "white" }}>
+            <RouterProvider router={router} />
+        </div>
     )
 }
 

@@ -9,7 +9,7 @@ import { fetchExam, changeParams } from '../slices/examSlice';
 
 import CardStudentHome from '../components/CardStudentHome';
 import UpcomingTest from '../components/UpcomingTest';
-// import CalendarShow from '@components/CalendarShow';
+import CalendarShow from '../components/CalendarShow';
 import buku from "../public/img/buku.png";
 
 function Home() {
@@ -28,16 +28,6 @@ function Home() {
   useEffect(() => {
     dispatch(fetchExam())
   }, [])
-
-  useEffect(() => {
-    if (exams) {
-      console.log({
-        exams,
-        time,
-        loading
-      })
-    }
-  }, [exams])
 
   return (
     <div className='Home'>
@@ -90,7 +80,7 @@ function Home() {
 
           <Grid2 size={4}>
             <div className="user-home-calendar tw-rounded-lg tw-shadow-lg tw-border tw-border-neutral3 tw-mb-5 tw-p-5 tw-overflow-hidden">
-              {/* <CalendarShow /> */}
+              <CalendarShow />
             </div>
             <UpcomingTest />
           </Grid2>

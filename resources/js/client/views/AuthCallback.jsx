@@ -20,13 +20,6 @@ const AuthCallback = () => {
 
         dispatch(login(credentials)).then(() => navigate("/client"))
 
-        console.log({
-            access_token: params.get('access_token'),
-            token_type: params.get('token_type'),
-            expires_in: params.get('expires_in'),
-            state: params.get('state'),
-        });
-
     }, [navigate]);
 
     return <h1>Authenticating...</h1>;

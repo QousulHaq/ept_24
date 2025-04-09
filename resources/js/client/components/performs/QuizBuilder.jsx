@@ -1,54 +1,87 @@
+// QuizBuilder.jsx
 import React from 'react';
+import { Radio } from 'antd';
 import Bundle from '../builder/Bundle';
 import MultiChoiceSingle from '../builder/MultiChoiceSingle';
-import { Radio } from 'antd';
 
-const QuizBuilder = ({ item, disabled = false, value = '', onChange }) => {
-    const answerChange = (element, itemId = null) => {
-        onChange({ value: element.target.value, itemId });
+const { Group: RadioGroup, Button: RadioButton } = Radio;
+
+const QuizBuilder = ({ item, disabled = false, value = '', onChange, onCountdownFreezeChange }) => {
+    if (!item) return null;
+
+    const answerChange = (e, itemId = null) => {
+        onChange?.({ value: e.target.value, itemId });
     };
 
-    const multipleChoiceValue = (item = null, val = null) => {
-        return item?.answers.find(a => a.content === (val ?? value))?.id ?? '';
+    const multipleChoiceValue = (itemParam = null, valueParam = null) => {
+        const currentItem = itemParam ?? item;
+        const currentValue = valueParam ?? value;
+
+        return (
+            currentItem?.answers?.find((a) => a.content === currentValue)?.id ?? ''
+        );
     };
 
-    if (item === null) return null;
-
-    return (
-        <div>
-            {item.type === 'bundle' ? (
-                <Bundle item={item} onCountdownFreezeChange={args => onChange(args)}>
-                    {({ item: subItem, value: subItemValue }) => (
-                        <MultiChoiceSingle
-                            item={subItem}
-                            disablePlugin={subItem.id !== item.id}
-                            musicIcon={{ width: 60, height: 40, hidden: true }}
-                            onCountdownFreezeChange={args => onChange(args)}
-                            style={{ marginTop: '2em' }}
+    if (item.type === 'bundle') {
+        return (
+            <Bundle item={item} onCountdownFreezeChange={onCountdownFreezeChange}>
+                {({ item: subItem, value: subItemValue }) => (
+                    <MultiChoiceSingle
+                        item={subItem}
+                        disablePlugin={subItem.id !== item.id}
+                        musicIcon={{ width: 60, height: 40, hidden: true }}
+                        onCountdownFreezeChange={onCountdownFreezeChange}
+                        className="mt-8"
+                    >
+                        <RadioGroup
+                            onChange={(e) => answerChange(e, subItem.id)}
+                            value={multipleChoiceValue(subItem, subItemValue)}
+                            disabled={disabled}
+                            className="w-full"
                         >
-                            <Radio.Group onChange={e => answerChange(e, subItem.id)} value={multipleChoiceValue(subItem, subItemValue)} disabled={disabled}>
-                                {subItem.answers.map((answer, i) => (
-                                    <Radio.Button key={answer.id} value={answer.id}>
-                                        {String.fromCharCode(65 + i)}. {answer.content}
-                                    </Radio.Button>
-                                ))}
-                            </Radio.Group>
-                        </MultiChoiceSingle>
-                    )}
-                </Bundle>
-            ) : item.type === 'multi_choice_single' ? (
-                <MultiChoiceSingle item={item} onCountdownFreezeChange={args => onChange(args)}>
-                    <Radio.Group onChange={e => answerChange(e)} value={multipleChoiceValue()} disabled={disabled}>
-                        {item.answers.map((answer, i) => (
-                            <Radio.Button key={answer.id} value={answer.id}>
-                                {String.fromCharCode(65 + i)}. {answer.content}
-                            </Radio.Button>
-                        ))}
-                    </Radio.Group>
-                </MultiChoiceSingle>
-            ) : null}
-        </div>
-    );
+                            {subItem.answers.map((answer, i) => (
+                                <RadioButton
+                                    key={answer.id}
+                                    value={answer.id}
+                                    className="block my-2 h-auto text-black"
+                                >
+                                    {`${String.fromCharCode(65 + i)}. ${answer.content}`}
+                                </RadioButton>
+                            ))}
+                        </RadioGroup>
+                    </MultiChoiceSingle>
+                )}
+            </Bundle>
+        );
+    }
+
+    if (item.type === 'multi_choice_single') {
+        return (
+            <MultiChoiceSingle
+                item={item}
+                onCountdownFreezeChange={onCountdownFreezeChange}
+            >
+                <RadioGroup
+                    onChange={(e) => answerChange(e)}
+                    value={multipleChoiceValue()}
+                    disabled={disabled}
+                    className="w-full"
+                >
+                    {item.answers.map((answer, i) => (
+                        <RadioButton
+                            key={answer.id}
+                            value={answer.id}
+                            className="block my-2 h-auto text-black"
+                        >
+                            {`${String.fromCharCode(65 + i)}. ${answer.content}`}
+                        </RadioButton>
+                    ))}
+                </RadioGroup>
+            </MultiChoiceSingle>
+        );
+    }
+
+    return null;
 };
 
 export default QuizBuilder;

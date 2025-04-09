@@ -70,7 +70,7 @@ function CardStudentHome({ exams, loading }) {
                                     <p className={`tw-text-sm tw-font-medium tw-text-primary1`}>{dateFormat(value?.scheduled_at)[1]}</p>
                                 </div>
                             </div>
-                            <Link to={`exam/${value?.id}`} className={`tw-bg-primary1 tw-py-1 tw-px-4 tw-rounded-full tw-text-white tw-text-sm`}>{readyToEnter(value?.scheduled_at) ? "Siap Dikerjakan" : "Detail Ujian"}</Link>
+                            <Link to={`exam/${value?.id}`} className={`tw-bg-primary1 tw-py-1 tw-px-4 tw-rounded-full tw-text-white tw-text-sm`}>{readyToEnter(value?.scheduled_at) ? "Pilih Ujian" : "Detail Ujian"}</Link>
                         </div>
                     </div>
                 </Grid2>

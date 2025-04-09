@@ -1,141 +1,168 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { howler } from '../utils/howlerClient';
-import _ from 'lodash';
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useSelector } from "react-redux";
+import { howler } from "../utils/howlerClient";
+import _ from "lodash";
 
+// Default data
 const DEFAULT_DATA = {
   line_count_context: null,
   audioContext_played: false,
   audioContext_instance: null,
 };
 
-const useExtraFeatures = (item, onCountdownFreezeChange = () => {}) => {
-  const [data, setData] = useState(_.cloneDeep({ ...DEFAULT_DATA }));
-  const isConnected = useSelector((state) => state.auth.connection_state === 'connected');
+const useExtraFeatures = (item, onCountdownFreezeChange) => {
+  // Redux State
+  const isConnected = useSelector((state) => state.auth.connection_state === "connected");
 
-  const extra = useCallback(() => {
+  // State
+  const [lineCountContext, setLineCountContext] = useState(DEFAULT_DATA.line_count_context);
+  const [audioContextPlayed, setAudioContextPlayed] = useState(DEFAULT_DATA.audioContext_played);
+  const [audioContextInstance, setAudioContextInstance] = useState(DEFAULT_DATA.audioContext_instance);
+
+  // Ref untuk content
+  const contentRef = useRef(null);
+
+  // 🔹 Computed: extra (memproses item config)
+  const extra = useMemo(() => {
+    if (!item) return {};
     return _.fromPairs(
       _.map(
-        _.merge(_.get(item, 'config.extra', []), _.get(item, 'config.sub-item.extra')), (value) => {
-          let split = value.split(':');
+        _.merge(_.get(item, "config.extra", []), _.get(item, "config.sub-item.extra")),
+        (value) => {
+          const split = value.split(":");
           return split.length === 1 ? [split, true] : split;
-        })
-    )
+        }
+      )
+    );
   }, [item]);
 
-  const getExtra = useCallback((name) => {
-    return extra()[name] ?? false;
+  // 🔹 Computed: contentStyle
+  const contentStyle = useMemo(() => {
+    if (!item) return {};
+
+    return {
+      ...(extra.width ? { width: extra.width } : {}),
+      ...(extra.no_content ? { display: "none" } : {}),
+      ...(extra.line_count ? { transform: "translateX(26px)" } : {}),
+    };
   }, [extra]);
 
-  const contentStyle = useMemo(() => {
-    const width = getExtra('width');
-    return {
-      ...(width ? { width } : {}),
-      ...(getExtra('no_content') ? { display: 'none' } : {}),
-      ...(getExtra('line_count') ? { transform: 'translateX(26px)' } : {}),
-    };
-  }, [getExtra]);  
+  // 🔹 Watch: isConnected (Pause/Play audio berdasarkan koneksi)
+  useEffect(() => {
+    if (!isConnected && audioContextPlayed) {
+      audioContextInstance?.pause();
+    } else if (audioContextPlayed) {
+      audioContextInstance?.play();
+    }
+  }, [isConnected, audioContextPlayed, audioContextInstance]);
 
+  // 🔹 Reset Data
   const resetPluginData = useCallback(() => {
-    setData((prevData) => ({ ...prevData, ...DEFAULT_DATA }));
+    setLineCountContext(DEFAULT_DATA.line_count_context);
+    setAudioContextPlayed(DEFAULT_DATA.audioContext_played);
+    setAudioContextInstance(DEFAULT_DATA.audioContext_instance);
   }, []);
 
+  // 🔹 Boot Plugins
+  const bootPlugins = useCallback(() => {
+    lineCount();
+    audio();
+  }, [lineCount, audio]);
+
+  // 🔹 Get Extra Config
+  const getExtra = useCallback(
+    (name) => {
+      return extra[name] ?? false;
+    },
+    [extra]
+  );
+
+  // 🔹 Line Count
   const lineCount = useCallback(
     _.debounce(() => {
-      const line_count = getExtra('line_count');
-      const refContent = document.querySelector('.content');
+      const line_count = getExtra("line_count");
+      const refContent = contentRef.current;
 
       if (line_count && refContent) {
         const context = { items: [] };
+
         let i = 1;
-        for (const el of refContent.children) {
+        for (const el of refContent.children[0]?.children || []) {
           context.items.push({
             height: `${el.clientHeight}px`,
-            color: i % Number(line_count) === 0 ? '#000' : '#9d9b9b',
+            color: i % Number(line_count) === 0 ? "#000" : "#9d9b9b",
           });
           i++;
         }
-        setData((prevData) => ({ ...prevData, line_count_context: context }));
+
+        setLineCountContext(context);
       } else {
-        setData((prevData) => ({ ...prevData, line_count_context: null }));
+        setLineCountContext(null);
       }
     }, 300),
     [getExtra]
   );
 
-  const audio = useCallback(
-    (readOf = 'item') => {
-      const hasAudio = getExtra('audio');
-      if (hasAudio) {
-        onCountdownFreezeChange(true);
-        const audioContextInstance = howler.getInstance(item[readOf]?.id);
+  // 🔹 Audio Control
+  const audio = useCallback(async (readOf = "item") => {
+    console.log("Fungsi audio() dipanggil...");
 
-        if (!audioContextInstance) {
-          console.warn(`Instance of howler with id ${item[readOf]?.id} not found!.`);
-          onCountdownFreezeChange(false);
-          return;
-        }
+    const hasAudio = getExtra("audio");
+    if (!hasAudio) return;
 
-        howler.pauseAll();
+    onCountdownFreezeChange(true);
+    const instance = howler?.getInstance(item?.id);
 
-        if (isConnected) {
-          const halfRemainingTime = Math.floor(parseInt(item['remaining_time']) / 2);
-
-          if (getExtra('time_audio_split') && halfRemainingTime > 3) {
-            onCountdownFreezeChange(false);
-            setData((prevData) => ({ ...prevData, audioContext_played: false }));
-
-            setTimeout(() => {
-              onCountdownFreezeChange(true);
-              setData((prevData) => ({ ...prevData, audioContext_played: true }));
-
-              audioContextInstance.play().then(() => {
-                onCountdownFreezeChange(false);
-                setData((prevData) => ({ ...prevData, audioContext_played: false }));
-              });
-            }, halfRemainingTime * 1000);
-          } else {
-            setData((prevData) => ({ ...prevData, audioContext_played: true }));
-
-            audioContextInstance.play().then(() => {
-              onCountdownFreezeChange(false);
-              setData((prevData) => ({ ...prevData, audioContext_played: false }));
-            });
-          }
-        }
-      }
-    },
-    [getExtra, howler, isConnected, item, onCountdownFreezeChange]
-  );
-
-  const bootPlugins = () => {
-    lineCount()
-    audio()
-  }
-
-  useEffect(() => {
-    if (!isConnected && data.audioContext_played) {
-      data.audioContext_instance?.pause();
-    } else if (data.audioContext_played) {
-      data.audioContext_instance?.play();
+    if (!instance) {
+      console.warn(`Instance of howler with id ${item?.id} not found!`);
+      onCountdownFreezeChange(false);
+      return;
     }
-  }, [isConnected, data.audioContext_played, data.audioContext_instance]);
 
-  useEffect(() => {
-    lineCount();
-    audio();
-  }, [item, lineCount, audio]);
+    howler.pauseAll();
+    setAudioContextInstance(instance);
 
-  return { 
-    resetPluginData, 
-    getExtra, 
-    lineCount, 
-    audio,
+    if (isConnected) {
+      let halfRemainingTime = Math.floor(parseInt(item?.remaining_time || 0) / 2);
+
+      if (getExtra("time_audio_split") && halfRemainingTime > 3) {
+        console.log("Menunda pemutaran audio hingga setengah waktu tersisa...");
+        onCountdownFreezeChange(false);
+        setAudioContextPlayed(false);
+
+        setTimeout(async () => {
+          console.log("Memainkan audio setelah jeda...");
+          onCountdownFreezeChange(true);
+          setAudioContextPlayed(true);
+          await instance.play();
+          console.log("Audio selesai setelah timeout, countdown kembali berjalan.");
+          setAudioContextPlayed(false);
+          onCountdownFreezeChange(false);
+        }, halfRemainingTime * 1000);
+      } else {
+        setAudioContextPlayed(true);
+        console.log("Memainkan audio langsung...");
+        await instance.play();
+        console.log("Audio selesai, countdown kembali berjalan.");
+        setAudioContextPlayed(false);
+        onCountdownFreezeChange(false);
+      }
+    }
+  }, [getExtra, isConnected, item, howler, onCountdownFreezeChange]);
+
+
+  return {
+    contentRef,
+    contentStyle,
+    extra,
     bootPlugins,
-    audioContext_played : data.audioContext_played, 
-    audioContext_instance: data.audioContext_instance, 
-    line_count_context : data.line_count_context,
-    contentStyle
+    resetPluginData,
+    getExtra,
+    lineCount,
+    audio,
+    audioContext_played: audioContextPlayed,
+    audioContext_instance: audioContextInstance,
+    line_count_context: lineCountContext,
   };
 };
 

@@ -28,14 +28,6 @@ function UpcomingTest() {
         dispatch(fetchFutureExam())
     }, [])
 
-    useEffect(() => {
-        if (exams) {
-            console.log({
-                future_exam: exams,
-            })
-        }
-    }, [exams])
-
     return (
         <div className='upcoming-test-card tw-rounded-lg tw-shadow-lg tw-p-6 tw-border tw-border-neutral3'>
             <h1 className={`tw-text-lg tw-text-primary1 tw-font-bold tw-text-center tw-mb-5`}>Tes yang akan datang</h1>

@@ -36,7 +36,7 @@ const echoMiddleware = ({ dispatch, getState }) => (next) => (action) => {
 
         case "echo/notification/listen":
             echo.private('notification.' + state.auth.user.username).notification((notification) => {
-                console.log(notification)
+                // console.log(notification)
                 dispatch(addNotification(notification))
             })
             break;

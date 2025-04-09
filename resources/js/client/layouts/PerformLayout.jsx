@@ -60,7 +60,11 @@ function PerformLayout() {
         setState("loading");
         dispatch(fetchSections()).then(() => {
             setState("loaded");
-            if (isExamEnded) {
+
+            const updatedSections = store.getState().perform.matter.sections;
+            const isExamEndedBoot = updatedSections.every((s) => s.ended_at !== null);
+
+            if (isExamEndedBoot) {
                 toGoodbyePage();
             } else if (isStarted) {
                 toTacklePage();
@@ -88,31 +92,10 @@ function PerformLayout() {
     }, [hasEnrolledExam, isBanned, dispatch]);
 
     useEffect(() => {
-        if (isExamEnded) {
+        if (sections.every((s) => s.ended_at !== null)) {
             toGoodbyePage();
         }
     }, [isExamEnded]);
-
-    useEffect(() => {
-        if (isBanned) {
-            console.log({
-                message: bannedText.message,
-                description: bannedText.description,
-                placement: "bottomLeft",
-            });
-        }
-    }, [isBanned]);
-
-    useEffect(() => {
-        console.log({
-            hasEnrolledExam,
-            activeExam,
-            isStarted,
-            isBanned,
-            sections,
-            itemLoadedPercentage,
-        })
-    }, [isBanned]);
 
     return (
         <div className="tw-w-screen tw-h-screen">

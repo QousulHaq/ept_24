@@ -13,7 +13,6 @@ import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
 import { getExamById, enroll } from '../slices/examSlice';
 import store from '../slices/store';
 
-
 const ExamDetail = () => {
     const { id: exam_id } = useParams()
     const dispatch = useDispatch()
@@ -22,7 +21,6 @@ const ExamDetail = () => {
     const [isFullScreen, setIsFullscreen] = useState(!!document.fullscreenElement);
 
     const exam = useSelector(getExamById(exam_id))
-    const appRef = useRef(null)
 
     useEffect(() => {
         const handleFullscreenChange = () => {
@@ -55,19 +53,15 @@ const ExamDetail = () => {
             navigate("/client/perform")
         })
     }
-    const toFullScreen = () => {
-        if (appRef.current) {
-            appRef.current.requestFullscreen();
+    const toFullScreen = (e) => {
+        const parentElement = e.target.closest(".app-client")
+        if (parentElement) {
+            parentElement.requestFullscreen();
         }
     }
 
-    useEffect(() => {
-        console.log(exam_id)
-        console.log(exam)
-    }, [])
-
     return (
-        <div className={`exam-detail-wrap tw-overflow-y-auto tw-bg-white tw-p-10 tw-pb-32`} style={{ width: "100%", height: "100vh" }} ref={appRef}>
+        <div className={`exam-detail-wrap tw-overflow-y-auto tw-bg-white tw-p-10 tw-pb-32`} style={{ width: "100%", height: "100vh" }}>
             <Link to={"/client"} className='tw-flex tw-items-center tw-mb-4'>
                 <ArrowBackIosRoundedIcon className='tw-text-primary3' fontSize='small' />
                 <p className='tw-text-primary3 tw-text-base tw-font-medium'>Kembali</p>
@@ -98,7 +92,7 @@ const ExamDetail = () => {
                                             isFullScreen ?
                                                 <button onClick={enterExam} className={`tw-bg-primary1 tw-py-2 tw-px-4 tw-rounded-full tw-text-white tw-text-base tw-h-fit`}>{"Click Here to Start"}</button>
                                                 :
-                                                <button onClick={toFullScreen} className={`tw-bg-primary1 tw-py-2 tw-px-4 tw-rounded-full tw-text-white tw-text-base tw-h-fit`}>{"Set Fullscreen"}</button>
+                                                <button onClick={(e) => toFullScreen(e)} className={`tw-bg-primary1 tw-py-2 tw-px-4 tw-rounded-full tw-text-white tw-text-base tw-h-fit`}>{"Set Fullscreen"}</button>
                                         }
                                     </>
                                     :

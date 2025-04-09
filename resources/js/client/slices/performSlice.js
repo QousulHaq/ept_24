@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit'
 import { STATUS, MUTATION as BASE_MUTATION } from './types'
 import laravelClient from '../utils/laravelClient'
-import { howler } from '../utils/howlerClient'
+import howler from '../utils/howlerClient'
 import _ from 'lodash'
 
 export const MUTATION = {
@@ -206,13 +206,18 @@ export const getItemLoadedPercentage = createSelector(
 export const fetchSections = createAsyncThunk(
     'perform/fetchSections',
     async (_, { dispatch }) => {
-        dispatch(change_status(STATUS.FETCHING))
-        const res = await laravelClient.request('api.client.section')
-        dispatch(change_matter(res.data))
-        await dispatch(postFetchSections())
-
-        dispatch(change_status(STATUS.IDLE))
-        return res
+        try {
+            dispatch(change_status(STATUS.FETCHING))
+            const res = await laravelClient.request('api.client.section')
+            dispatch(change_matter(res.data))
+            await dispatch(postFetchSections())
+            dispatch(change_status(STATUS.IDLE))
+            return res
+        } catch (error) {
+            dispatch(change_status(STATUS.ERROR))
+            console.error('Error fetching sections:', error)
+            throw error
+        }
     }
 )
 
@@ -229,7 +234,7 @@ export const postFetchSections = createAsyncThunk(
         dispatch(reset_item_total())
         for (const section of state.matter.sections) {
             const response = await dispatch(loadSection(section))
-            const items = (response.items ?? [])
+            const items = (response.payload.items ?? [])
 
             dispatch(add_item_total(items.filter(item => item.hasOwnProperty('attachments') && item.attachments.length > 0).length))
 
@@ -247,7 +252,7 @@ export const postFetchSections = createAsyncThunk(
 
                     const files = item.attachments.map(a => ({ url: a.url, format: mimeToFormat(a.mime) }))
                     try {
-                        await howler.load(files, item.id) 
+                        await howler.load(files, item.id)
                         dispatch(advance_loaded_item_total())
                     } catch (e) {
                         throw new Error("failed load file! : " + JSON.stringify(files))
@@ -328,7 +333,7 @@ export const calculateActive = () => (dispatch, getState) => {
 export const saveAnswer = createAsyncThunk(
     'perform/saveAnswer',
     async ({ itemId = null, itemAnswerId = null, content = null }, { dispatch, getState }) => {
-        const state = getState().perform
+        const state = getState()
         const activeItem = getActiveItem(state)
         const activeAttempt = getActiveAttempt(state)
         const activeSection = getActiveSection(state)
@@ -385,7 +390,7 @@ export const saveTime = createAsyncThunk(
     'perform/saveTime',
     async ({ withMutation = false, gap = 5 }, { dispatch, getState }) => {
         let res = {}
-        const state = getState().perform
+        const state = getState()
         const activeItem = getActiveItem(state)
         const activeSection = getActiveSection(state)
         const itemDuration = getItemDuration(state)
@@ -413,8 +418,12 @@ export const saveTime = createAsyncThunk(
     }
 )
 
+export const endPerform = () => (dispatch) => {
+    dispatch(fetchSections())
+}
+
 export const next = (payload) => (dispatch, getState) => {
-    const state = getState().perform
+    const state = getState()
     const activeItem = getActiveItem(state)
     const activeSection = getActiveSection(state)
     const itemDuration = getItemDuration(state)
@@ -425,12 +434,12 @@ export const next = (payload) => (dispatch, getState) => {
     }
 
     function nextSection() {
-        const activeSectionIndex = state.matter.sections.findIndex(s => s.id === activeSection.id)
+        const activeSectionIndex = state.perform.matter.sections.findIndex(s => s.id === activeSection.id)
 
-        if (activeSectionIndex + 1 === state.matter.sections.length)
+        if (activeSectionIndex + 1 === state.perform.matter.sections.length)
             return dispatch(endPerform())
 
-        const newActiveSection = state.matter.sections[activeSectionIndex + 1]
+        const newActiveSection = state.perform.matter.sections[activeSectionIndex + 1]
         if (newActiveSection.items.length === 0) {
             console.warn('newActiveSection length is zero')
             return
@@ -453,10 +462,6 @@ export const next = (payload) => (dispatch, getState) => {
     } else {
         nextItem()
     }
-}
-
-export const endPerform = () => (dispatch) => {
-    dispatch(fetchSections())
 }
 
 export const {

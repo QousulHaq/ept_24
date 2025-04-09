@@ -1,8 +1,11 @@
+// ItemNavigation.jsx
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Drawer, Collapse, Row, Col, Button, Icon } from 'antd';
+import { Drawer, Collapse, Row, Col, Button } from 'antd';
+import { CheckCircleOutlined } from '@ant-design/icons';
+import { useSelector, useDispatch } from 'react-redux';
 import { getSection, getActiveSection, getActiveItem, getItemDuration, getSectionItemsAnswered, change_active } from '../../slices/performSlice';
-import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
+
+const { Panel } = Collapse;
 
 const ItemNavigation = ({ visible, onClose }) => {
     const dispatch = useDispatch();
@@ -13,24 +16,22 @@ const ItemNavigation = ({ visible, onClose }) => {
     const itemDuration = useSelector(getItemDuration)
     const sectionItemsAnswered = useSelector(getSectionItemsAnswered)
 
+    // Effect for watching activeSection/activeItem like Vue's watch
     useEffect(() => {
-        if (activeSection !== null) {
-            close();
+        if (activeSection && activeItem) {
+            onClose?.();
         }
-    }, [activeSection]);
-
-    useEffect(() => {
-        if (activeItem !== null) {
-            close();
-        }
-    }, [activeItem]);
+    }, [activeSection, activeItem]);
 
     const getAnsweredClass = (item) => {
-        return item !== null && sectionItemsAnswered.includes(item.id) ? ['answered'] : [];
+        if (item && sectionItemsAnswered.includes(item.id)) {
+            return 'answered';
+        }
+        return '';
     };
 
     const getTypeButton = (item) => {
-        return item.id !== activeItem.id ? 'default' : 'primary';
+        return item.id !== activeItem?.id ? 'default' : 'primary';
     };
 
     const changeActiveItem = (itemId) => {
@@ -39,40 +40,63 @@ const ItemNavigation = ({ visible, onClose }) => {
         }
     };
 
-    const close = () => {
-        onClose();
-    };
+    // If null, don't render anything (v-if)
+    if (!activeSection || !activeItem) return null;
 
     return (
         <Drawer
-            open={visible && activeSection !== null && activeItem !== null}
             placement="right"
             closable={false}
-            onClose={close}
+            open={visible}
+            onClose={onClose}
+            bodyStyle={{ padding: 0 }}
         >
-            <Collapse accordion activeKey={activeSection?.id} expandIconPosition="end" bordered={false}>
-                {sections.map(section => (
-                    <Collapse.Panel header={section.config.title} key={section.id} collapsible={section.id !== activeSection.id ? "disabled" : ""}>
+            <Collapse
+                accordion
+                activeKey={activeSection.id}
+                expandIconPosition="right"
+                bordered={false}
+            >
+                {sections.map((section) => (
+                    <Panel
+                        header={section.config.title}
+                        key={section.id}
+                        disabled={section.id !== activeSection.id}
+                    >
                         <Row justify="space-between">
-                            {section.items.map(item => (
-                                <Col key={item.id} md={item.label.length > 4 ? 24 : 11} sm={24}>
+                            {section.items.map((item) => (
+                                <Col
+                                    key={item.id}
+                                    className="my-1"
+                                    md={item.label.length > 4 ? 24 : 11}
+                                    sm={24}
+                                >
                                     <Button
                                         block
                                         onClick={() => changeActiveItem(item.id)}
-                                        className={getAnsweredClass(item).join(' ')}
-                                        disabled={(itemDuration && item.id !== activeItem.id) || (section.id !== activeSection.id)}
+                                        className={`w-full whitespace-normal text-base h-auto ${getAnsweredClass(item)}`}
+                                        disabled={
+                                            (itemDuration && item.id !== activeItem.id) ||
+                                            (section.id !== activeSection.id)
+                                        }
                                         type={getTypeButton(item)}
                                     >
-                                        {item.label} {getAnsweredClass(item).length > 0 && <CheckCircleOutlineRoundedIcon />}
+                                        {item.label}
+                                        {getAnsweredClass(item) && (
+                                            <span className="ml-1">
+                                                <CheckCircleOutlined />
+                                            </span>
+                                        )}
                                     </Button>
                                 </Col>
                             ))}
                         </Row>
-                    </Collapse.Panel>
+                    </Panel>
                 ))}
             </Collapse>
         </Drawer>
     );
 };
+
 
 export default ItemNavigation;

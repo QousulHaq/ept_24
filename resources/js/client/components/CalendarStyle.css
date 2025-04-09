@@ -1,0 +1,25 @@
+/* react-calendar */
+.react-calendar{
+    @apply tw-border-0 tw-w-full
+}
+
+.react-calendar__navigation button.react-calendar__navigation__arrow:first-child {
+    display: none;
+}
+
+.react-calendar__navigation button.react-calendar__navigation__arrow:last-child {    
+    display: none;
+}
+.react-calendar__month-view__weekdays__weekday abbr{
+    @apply tw-text-primary3 tw-no-underline tw-capitalize tw-font-bold tw-font-sans
+} 
+
+.react-calendar__tile--active:enabled{
+    @apply tw-text-white tw-rounded-full tw-size-fit
+}
+
+.react-calendar__tile{
+    @apply tw-font-sans tw-font-semibold tw-text-primary3
+}
+
+/* react-calendar */

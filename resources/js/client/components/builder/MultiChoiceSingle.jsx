@@ -1,119 +1,113 @@
-import React, { useEffect, useState } from 'react';
-import { Row, Col, Divider } from 'antd';
+import React, { useEffect, useRef, useState } from 'react'
+import { useEditor, EditorContent } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import Link from '@tiptap/extension-link'
+import Underline from '@tiptap/extension-underline'
+import MusicIcon from './part/MusicIcon'
+import LineCount from './part/LineCount'
+import ArrowNavigation from '../performs/ArrowNavigation'
+import { usePlugins } from '../../hooks/usePlugins'
+import classNames from 'classnames'
 
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Link from '@tiptap/extension-link';
-import Underline from '@tiptap/extension-underline';
-import Subscript from '@tiptap/extension-subscript';
-import Superscript from '@tiptap/extension-superscript';
-import TaskList from '@tiptap/extension-task-list';
-import TaskItem from '@tiptap/extension-task-item';
+const extensions = [StarterKit, Link, Underline]
 
-import LineCount from './part/LineCount';
-import MusicIcon from "./part/MusicIcon";
-import ArrowNavigation from '../performs/ArrowNavigation';
-import useExtraFeatures from '../../hooks/useExtraFeatures';
+const MultiChoiceSingle = ({ item, disablePlugin = false, musicIcon = { width: 300, height: 200, hidden: false }, onCountdownFreezeChange, children }) => {
 
-const extensions = [
-  StarterKit.configure({
-    heading: {
-      levels: [1, 2, 3, 4, 5],
-    },
-  }),
-  Link,
-  Underline,
-  Subscript,
-  Superscript,
-  TaskList,
-  TaskItem.configure({
-    nested: true, // Mengizinkan daftar tugas bersarang
-  }),
-];
-
-const MultiChoiceSingle = ({ children, item, disablePlugin = false, musicIcon = { width: 300, height: 200, hidden: false } }) => {
-  const [tiptap, setTiptap] = useState({ content: null, subContent: null });
   const {
+    pluginData,
+    contentRef,
     getExtra,
-    audioContext_played,
-    audioContext_instance,
-    line_count_context,
     resetPluginData,
-    bootPlugins,
-  } = useExtraFeatures(item);
+    bootPlugins
+  } = usePlugins({ item, onCountdownFreezeChange })
 
+  const [audioPlayed, setAudioPlayed] = useState(false)
   const contentEditor = useEditor({
     extensions,
-    content: item.content?.replaceAll(' ', '&nbsp;'),
     editable: false,
-  });
-
+    content: item.content?.replaceAll(' ', '\u00A0') || '',
+  })
   const subContentEditor = useEditor({
     extensions,
-    content: ((!isNaN(item.label) ? item.label + '. ' : '') + item.sub_content)?.replaceAll(' ', '&nbsp;'),
     editable: false,
-  });
+    content: item.sub_content
+      ? ((!isNaN(item.label) ? `${item.label}. ` : '') + item.sub_content)?.replaceAll(' ', '\u00A0')
+      : '',
+  })
+
+  const lineCountContext = getExtra(item, 'line_count_context')
 
   useEffect(() => {
-    bootMultiChoiceSingle();
-  }, [item, disablePlugin]);
-
-  const bootMultiChoiceSingle = () => {
-    if (tiptap.content !== null) {
-      tiptap.content.commands.setContent(item.content?.replaceAll(' ', '&nbsp;'));
-    } else {
-      setTiptap(prev => ({ ...prev, content : contentEditor }));
+    if (contentEditor && item.content) {
+      contentEditor.commands.setContent(item.content.replaceAll(' ', '\u00A0'))
     }
-
-    if (tiptap.subContent !== null) {
-      tiptap.subContent.commands.setContent(((!isNaN(item.label) ? item.label + '. ' : '') + item.sub_content)?.replaceAll(' ', '&nbsp;'));
-    } else {
-      setTiptap(prev => ({ ...prev, subContent: subContentEditor }));
+    if (subContentEditor && item.sub_content) {
+      subContentEditor.commands.setContent(
+        ((!isNaN(item.label) ? `${item.label}. ` : '') + item.sub_content)?.replaceAll(' ', '\u00A0')
+      )
     }
 
     if (disablePlugin) {
-      resetPluginData();
+      resetPluginData()
     } else {
-      bootPlugins();
+      bootPlugins()
     }
-  };
+  }, [item, disablePlugin])
 
-  useEffect(() => {
-    if (item.content) {
-      setTiptap(prev => ({ ...prev, content: contentEditor }));
-    }
-
-    if (item.sub_content) {
-      setTiptap(prev => ({ ...prev, subContent: contentEditor }));
-    }
-
-    bootMultiChoiceSingle();
-  }, [item]);
+  const hasSubContent = item.sub_content !== null
 
   return (
-    <Row type="flex" justify="space-between">
-      <Col md={item.sub_content !== null ? 14 : 24} sm={24} style={{ overflowX: 'auto' }}>
-        {!musicIcon.hidden && getExtra('audio') && <MusicIcon played={audioContext_played} width={musicIcon.width} height={musicIcon.height} />}
-        {line_count_context && <LineCount leap={getExtra('line_count')} context={line_count_context} />}
-        {tiptap.content && <EditorContent className={`editor__content ${getExtra('alphabet_counter_underline') ? 'alphabet_counter' : ''}`} editor={tiptap.content} />}
-        <Divider type="horizontal" />
-        {item.sub_content === null && <div><Divider type="horizontal" /><ArrowNavigation /></div>}
-      </Col>
-      {item.sub_content !== null && <Divider type="vertical" orientation="center" style={{ height: 'auto' }} />}
-      {item.sub_content !== null && (
-        <Col md={9} sm={24}>
-          {tiptap.subContent && <EditorContent className="editor__content" editor={tiptap.subContent} />}
-          <Divider type="horizontal" />
-          <div>{/* Slot for other components */}</div>
-          <div>
-            <Divider type="horizontal" />
+    <div className="flex flex-col md:flex-row justify-between">
+      <div
+        className={classNames(
+          'px-2 overflow-x-auto',
+          hasSubContent ? 'md:w-7/12' : 'w-full'
+        )}
+      >
+        {!musicIcon.hidden && getExtra(item, 'audio') && (
+          <MusicIcon played={audioPlayed} width={musicIcon.width} height={musicIcon.height} />
+        )}
+
+        {lineCountContext && (
+          <LineCount leap={getExtra('line_count')} context={lineCountContext} />
+        )}
+
+        {contentEditor && (
+          <EditorContent
+            editor={contentEditor}
+            className={classNames('prose', {
+              'alphabet_counter': getExtra(item, 'alphabet_counter_underline'),
+            })}
+          />
+        )}
+
+        <hr className="my-4" />
+
+        {!hasSubContent && (
+          <>
             {children}
+            <hr className="my-4" />
+            <ArrowNavigation />
+          </>
+        )}
+      </div>
+
+      {hasSubContent && (
+        <>
+          <div className="mx-4 border-l h-auto hidden md:block" />
+          <div className="md:w-4/12 w-full mt-4 md:mt-0">
+            {subContentEditor && (
+              <EditorContent editor={subContentEditor} className="prose" />
+            )}
+            <hr className="my-4" />
+            {children}
+            <hr className="my-4" />
             <ArrowNavigation />
           </div>
-        </Col>
+        </>
       )}
-    </Row>
-  );
-};
+    </div>
+  )
+}
 
-export default MultiChoiceSingle;
+export default MultiChoiceSingle
