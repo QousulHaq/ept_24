@@ -22,7 +22,8 @@ body.sidebar-mini {
     display: none !important;
   }
   .main-sidebar {
-    width: 65px;
+    width: 85px;
+    padding-right: 1rem;
     overflow: initial !important;
     position: absolute;
     box-shadow: none;
@@ -142,7 +143,7 @@ body.sidebar-mini {
     }
   }
   .navbar {
-    left: 65px;
+    left: 85px;
   }
   .main-content, .main-footer {
     padding-left: 90px;

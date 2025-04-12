@@ -23,6 +23,11 @@ class ItemRoute extends BaseRoute
             'uses' => $this->uses('create'),
         ]);
 
+        $this->router->post($this->prefix('store'), [
+            'as' => $this->name('store'),
+            'uses' => $this->uses('store'),
+        ]);
+
         $this->router->get($this->prefix('/{item}/item'), [
             'as' => $this->name('edit'),
             'uses' => $this->uses('edit'),

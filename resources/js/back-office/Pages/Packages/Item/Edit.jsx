@@ -1,203 +1,123 @@
 import React, { useEffect, useState } from 'react'
 import InputQuestionCode from '../../../ReactComponents/InputQuestionCode'
 import MultipleChoice from '../../../ReactComponents/QuizBuilder/MultipleChoice'
+import Bundle from '../../../ReactComponents/QuizBuilder/Bundle'
+import SelectClassification from '../../../ReactComponents/QuizBuilder/SelectClassification'
 import Intros from '../../../ReactComponents/QuizBuilder/Intros'
-import AudioQuestion from '../../../ReactComponents/QuizBuilder/AudioQuestion'
+import AudioQuestion from '../../../ReactComponents/QuizBuilder/AudioForm'
 import IntrosAudioQuestion from '../../../ReactComponents/QuizBuilder/IntrosAudioQuestion'
 
 import { useForm } from '@inertiajs/inertia-react'
 
-const Edit = ({ item, isIntro, package: package_detail}) => {
-  const [itemData, setItemData] = useState(item)
+const Edit = ({ item, isIntro, package_id, config, categories }) => {
+  const [singleQuestion, setSingleQuestion] = useState(item)
 
   const { data, setData, put, processing, errors } = useForm()
-
-  const [newChildItem, setNewChildItem] = useState(item.children)
-
-  const handleContentChange = (data, id) => {
-    const updatedChild = newChildItem.map((item) => (
-      item.id === id ? ({
-        ...item,
-        content: data
-      }) : (
-        {
-          ...item
-        }
-      )
-    ))
-    setNewChildItem(updatedChild)
-  }
-
-  const handleAnsContentChange = (value, question_index, answer_index) => {
-    const updatedChild = newChildItem.map((item, index) => (
-      index === question_index ? ({
-        ...item,
-        answers: item.answers.map((data, ans_index) => (
-          ans_index === answer_index ? (
-            {
-              ...data,
-              content: value
-            }
-          ) : (
-            {
-              ...data
-            }
-          )
-        ))
-      }) : (
-        {
-          ...item
-        }
-      )
-    ))
-    setNewChildItem(updatedChild)
-  }
-
-  const handleAnswerChange = (question_index, answer_index) => {
-    const updatedChild = newChildItem.map((item, index) => (
-      index === question_index ? ({
-        ...item,
-        answers: item.answers.map((data, ans_index) => (
-          ans_index === answer_index ? (
-            {
-              ...data,
-              correct_answer: 1
-            }
-          ) : (
-            {
-              ...data,
-              correct_answer: 0
-            }
-          )
-        ))
-      }) : (
-        {
-          ...item
-        }
-      )
-    ))
-    setNewChildItem(updatedChild)
-  }
-
-  const [newIntroduction, setNewIntroduction] = useState(item.content)
-  const [newQuestionCode, setNewQuestionCode] = useState(item.code)
-
-  const handlePushQuestion = () => {
-    setNewChildItem((prevItem) => ([...prevItem, {
-      answer_order_random: "",
-      answers: [{
-        content: "",
-        correct_answer: 0,
-        order: 0
-      }],
-      attachment: undefined,
-      content: "",
-      order: 0,
-      type: "multi_choice_single"
-    }]))
-  }
-
-  const handleDeleteQuestion = (question_index) => {
-    const updatedChildren = newChildItem.filter((_, index) => index !== question_index)
-    setNewChildItem(updatedChildren)
-  }
-
-  const handlePushAnswer = (question_index, answer_index) => {
-    const updatedChild = newChildItem.map((item, index) =>
-      index === question_index && item.answers[answer_index].content !== ""
-        ? {
-          ...item,
-          answers: [
-            ...item.answers,
-            {
-              content: "",
-              correct_answer: 0,
-              order: item.answers.length
-            }
-          ]
-        }
-        : { ...item }
-    );
-    setNewChildItem(updatedChild);
-  };
-
-  const handleDeleteAnswer = (question_index, answer_index) => {
-    const updatedAnswerList = newChildItem[question_index].answers.filter((_, index) => index !== answer_index)
-    const updatedChild = newChildItem.map((item, index) => (
-      index === question_index
-        ? {
-          ...item,
-          answers: updatedAnswerList
-        }
-        : { ...item }
-    ))
-    setNewChildItem(updatedChild)
-  }
-
-  const updateItemData = () => {
-    setItemData((prevData) => ({
-      ...prevData,
-      children: newChildItem,
-      content: newIntroduction,
-      code: newQuestionCode,
-    }))
-  }
-
-  const SaveEditData = () => {
-    console.log({
-      data
-    })
-    put(`/back-office/package/${package_detail.id}/item/${item.id}/update `)
-  }
-
-  useEffect(() => {
-    console.log("item", item)
-    console.log(isIntro)
-    console.log("package", package_detail)
-  }, [])
-
-  useEffect(() => {
-    updateItemData()
-  }, [newChildItem, newIntroduction, newQuestionCode])
-
-  useEffect(() => {
-    setData(itemData)
-  }, [itemData])
 
   useEffect(() => {
     console.log(errors)
   }, [errors])
 
+  useEffect(() => {
+    console.log({
+      item,
+      categories,
+      package_id,
+      config
+    })
+  }, [errors])
+
+  useEffect(() => {
+    setData(singleQuestion)
+  }, [singleQuestion])
+
+  const SaveEditData = () => {
+    put(`/back-office/package/${package_id}/item/${item.id}/update`)
+  }
+
+  const handleContentChange = (data, data_index) => {
+    setSingleQuestion((prev) => ({
+      ...prev,
+      content: data
+    }))
+  }
+
+  const handleAnsContentChange = (value, question_index, answer_index) => {
+    setSingleQuestion((prev) => ({
+      ...prev,
+      answers: prev.answers.map((item, index) => (
+        answer_index === index ? ({
+          ...item,
+          content: value
+        }) : ({
+          ...item
+        })
+      ))
+    }))
+  }
+
+  const handleAnswerChange = (question_index, answer_index) => {
+    setSingleQuestion((prev) => ({
+      ...prev,
+      answers: prev.answers.map((item, index) => (
+        index === answer_index ? ({
+          ...item,
+          correct_answer: 1
+        }) : ({
+          ...item,
+          correct_answer: 0
+        })
+      ))
+    }))
+  }
+
+  const handlePushAnswer = (question_index, answer_index) => {
+    setSingleQuestion((prev) => ({
+      ...prev,
+      answers: [
+        ...prev.answers,
+        {
+          content: "",
+          correct_answer: false,
+          order: answer_index + 1,
+        }
+      ]
+    }))
+  };
+
+  const handleDeleteAnswer = (question_index, answer_index) => {
+    setSingleQuestion((prev) => ({
+      ...prev,
+      answers: prev.answers.filter((_, index) => index !== answer_index)
+    }))
+  }
+
   return (
     <>
       {
-        item.type !== "multi_choice_single" ?
+        item?.type !== "multi_choice_single" ?
           <>
-            <InputQuestionCode content_data={newQuestionCode} handleQuestionCodeChange={(data) => setNewQuestionCode(data)} />
-            <Intros content_data={newIntroduction} handleIntroChange={(data) => setNewIntroduction(data)} question_code={item.code} />
-            {
-              newChildItem.map((data, index) => (
-                <MultipleChoice
-                  content_data={data}
-                  number={index}
-                  key={index}
-                  handleContentChange={(data, id) => handleContentChange(data, id)}
-                  handleAnsContentChange={(value, question_index, answer_index) => handleAnsContentChange(value, question_index, answer_index)}
-                  handleAnswerChange={(question_index, answer_index) => handleAnswerChange(question_index, answer_index)}
-                  handlePushAnswer={(index, answer_index) => handlePushAnswer(index, answer_index)}
-                  handleDeleteQuestion={(question_index) => handleDeleteQuestion(question_index)}
-                  handleDeleteAnswer={(question_index, answer_index) => handleDeleteAnswer(question_index, answer_index)}
-                />
-              ))
-            }
-            <button onClick={handlePushQuestion}>Add Question</button>
-            <button onClick={SaveEditData}>{processing ? "Menyimpan" : "Save Data"}</button>
+            <Bundle onDataChange={(data) => setData(data)} itemTemplateData={item} isAudio={config.item?.extra?.includes('audio')}/>
           </>
           :
           <>
-            <MultipleChoice content_data={item} number={0} />
+            <SelectClassification classifications={categories} value={singleQuestion.category} onChange={(data) => setSingleQuestion((prev) => ({ ...prev, category: data }))} />
+            <InputQuestionCode content_data={singleQuestion.code} handleQuestionCodeChange={(data) => setSingleQuestion((prev) => ({ ...prev, code: data }))} />
+            <MultipleChoice
+              content_data={singleQuestion}
+              number={0}
+              isBundle={false}
+              isAudio={config.item?.extra?.includes('audio')}
+              handleContentChange={(data, id) => handleContentChange(data, id)}
+              handleAnsContentChange={(value, question_index, answer_index) => handleAnsContentChange(value, question_index, answer_index)}
+              handleAnswerChange={(question_index, answer_index) => handleAnswerChange(question_index, answer_index)}
+              handlePushAnswer={(index, answer_index) => handlePushAnswer(index, answer_index)}
+              handleDeleteAnswer={(question_index, answer_index) => handleDeleteAnswer(question_index, answer_index)}
+              handleAudioChange={(data) => setSingleQuestion((prev) => ({ ...prev, attachment: data }))}
+            />
           </>
       }
+      <button onClick={SaveEditData}>{processing ? "Menyimpan" : "Save Data"}</button>
     </>
   )
 }

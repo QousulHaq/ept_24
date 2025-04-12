@@ -14,18 +14,18 @@ use Illuminate\Http\Request;
 
 class ItemController extends Controller
 {
-    /**
-     * @param \App\Http\Requests\Package\Item\StoreItemRequest $request
-     * @param \App\Entities\Question\Package $package
-     * @return \App\Jobs\Package\Item\CreateNewItem
-     */
-    public function store(StoreItemRequest $request, Package $package): CreateNewItem
-    {
-        $job = new CreateNewItem($request, $package);
-        $this->dispatchNow($job);
+    // /**
+    //  * @param \App\Http\Requests\Package\Item\StoreItemRequest $request
+    //  * @param \App\Entities\Question\Package $package
+    //  * @return \App\Jobs\Package\Item\CreateNewItem
+    //  */
+    // public function store(StoreItemRequest $request, Package $package): CreateNewItem
+    // {
+    //     $job = new CreateNewItem($request, $package);
+    //     $this->dispatchNow($job);
 
-        return $job;
-    }
+    //     return $job;
+    // }
 
     /** @noinspection PhpUnusedParameterInspection */
     public function show(Package $package, Package\Item $item): Package\Item

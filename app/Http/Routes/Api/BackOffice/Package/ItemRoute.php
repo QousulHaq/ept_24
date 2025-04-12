@@ -25,10 +25,10 @@ class ItemRoute extends BaseRoute
             'uses' => $this->uses('index'),
         ]);
 
-        $this->router->post($this->prefix('store'), [
-            'as' => $this->name('store'),
-            'uses' => $this->uses('store'),
-        ]);
+        // $this->router->post($this->prefix('store'), [
+        //     'as' => $this->name('store'),
+        //     'uses' => $this->uses('store'),
+        // ]);
 
         $this->router->get($this->prefix('{item}'), [
             'as' => $this->name('show'),

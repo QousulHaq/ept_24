@@ -62,14 +62,20 @@ class PackageController extends Controller
         }
 
         $itemQuery->latest();
-
+        
         $items = $itemQuery->paginate();
-
+        
         $scheduledExams = $package->exams()->where('scheduled_at', '>', Carbon::now())->get();
-
+        
         // return view('pages.package.show',
         //     compact('package', 'items', 'intros', 'subpackage', 'scheduledExams'));
-        return Inertia::render('Packages/ShowPackages', compact('package', 'items', 'intros', 'subpackage', 'scheduledExams'));
+        return Inertia::render('Packages/ShowPackages', [
+            'package' => $package, 
+            'items' => $items, 
+            'intros' => $intros, 
+            'subpackage' => $subpackage->fresh(['categories']), 
+            'scheduledExams' => $scheduledExams,
+        ]);
     }
 
     /**

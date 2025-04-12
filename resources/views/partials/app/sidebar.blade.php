@@ -1,4 +1,4 @@
-<aside id="sidebar-wrapper">
+<aside id="sidebar-wrapper" class="">
   <div class="sidebar-brand tw-p-5">
     {{-- <a href="">{{ env('APP_NAME') }}</a> --}}
     <img src="{{asset('assets\img\logo.svg')}}" alt="" class="tw-ml-5">
@@ -10,8 +10,8 @@
 
   <ul class="sidebar-menu">
 
-    <li class="">
-      <a class="nav-link" href="{{ route('back-office.dashboard') }}" style="padding-left: 0;">
+    <li class="tw-p-0 tw-pr-2">
+      <a class="nav-link" href="{{ route('back-office.dashboard') }}" style="padding-left: 0; padding-right:0">
         <div class="nav-link-decoration {{ request()->is('back-office/dashboard') ? 'tw-bg-primary3' : 'tw-bg-white' }} tw-h-full tw-p-1.5 tw-mr-2 tw-rounded-r-md"></div>
         <div class="{{ request()->is('back-office/dashboard') ? 'tw-bg-primary3 tw-text-white' : 'tw-bg-white tw-text-black' }} tw-h-full tw-w-full tw-p-3 tw-rounded-md tw-flex tw-justify-center tw-items-center">
           <i class="fas fa-columns"></i><span style="margin-top: 0; font-weight: 400; font-size: small;">Home</span>
@@ -20,8 +20,8 @@
     </li>
 
     @if(auth()->user()->can('package.manage'))
-      <li class="">
-        <a class="nav-link" href="{{ route('back-office.package.index') }}" style="padding-left: 0;">
+      <li class="tw-p-0 tw-pr-2">
+        <a class="nav-link" href="{{ route('back-office.package.index') }}" style="padding-left: 0; padding-right:0">
           <div class="nav-link-decoration {{ request()->is('back-office/package*') ? 'tw-bg-primary3' : 'tw-bg-white' }} tw-h-full tw-p-1.5 tw-mr-2 tw-rounded-r-md"></div>
           <div class="{{ request()->is('back-office/package*') ? 'tw-bg-primary3 tw-text-white' : 'tw-bg-white tw-text-black' }} tw-h-full tw-w-full tw-p-3 tw-rounded-md tw-flex tw-justify-center tw-items-center">
             <i class="fas fa-book"></i><span style="margin-top: 0; font-weight: 400; font-size: small;">My Bank Questions</span>
@@ -31,8 +31,8 @@
     @endif
 
     @can('attachment.manage')
-      <li class="">
-        <a class="nav-link" href="{{ route('back-office.attachment') }}" style="padding-left: 0;">
+      <li class="tw-p-0 tw-pr-2">
+        <a class="nav-link" href="{{ route('back-office.attachment') }}" style="padding-left: 0; padding-right:0">
           <div class="nav-link-decoration {{ request()->is('back-office/attachment') ? 'tw-bg-primary3' : 'tw-bg-white' }} tw-h-full tw-p-1.5 tw-mr-2 tw-rounded-r-md"></div>
           <div class="{{ request()->is('back-office/attachment') ? 'tw-bg-primary3 tw-text-white' : 'tw-bg-white tw-text-black' }} tw-h-full tw-w-full tw-p-3 tw-rounded-md tw-flex tw-justify-center tw-items-center">
             <i class="fas fa-file"></i><span style="margin-top: 0; font-weight: 400; font-size: small;">Attachment</span>
@@ -42,8 +42,8 @@
     @endcan
 
     @can('exam.manage')
-      <li class="">
-        <a class="nav-link" href="{{ route('back-office.schedule.index') }}" style="padding-left: 0;">
+      <li class="tw-p-0 tw-pr-2">
+        <a class="nav-link" href="{{ route('back-office.schedule.index') }}" style="padding-left: 0; padding-right:0">
           <div class="nav-link-decoration {{ request()->is('back-office/schedule*') ? 'tw-bg-primary3' : 'tw-bg-white' }} tw-h-full tw-p-1.5 tw-mr-2 tw-rounded-r-md"></div>
           <div class="{{ request()->is('back-office/schedule*') ? 'tw-bg-primary3 tw-text-white' : 'tw-bg-white tw-text-black' }} tw-h-full tw-w-full tw-p-3 tw-rounded-md tw-flex tw-justify-center tw-items-center">
             <i class="fas fa-clock"></i><span style="margin-top: 0; font-weight: 400; font-size: small;">Schedules</span>
@@ -51,8 +51,8 @@
         </a>
       </li>
 
-      <li class="">
-        <a class="nav-link" href="{{ route('back-office.monitor.index') }}" style="padding-left: 0;">
+      <li class="tw-p-0 tw-pr-2">
+        <a class="nav-link" href="{{ route('back-office.monitor.index') }}" style="padding-left: 0; padding-right:0">
           <div class="nav-link-decoration {{ request()->is('back-office/monitor*') ? 'tw-bg-primary3' : 'tw-bg-white' }} tw-h-full tw-p-1.5 tw-mr-2 tw-rounded-r-md"></div>
           <div class="{{ request()->is('back-office/monitor*') ? 'tw-bg-primary3 tw-text-white' : 'tw-bg-white tw-text-black' }} tw-h-full tw-w-full tw-p-3 tw-rounded-md tw-flex tw-justify-center tw-items-center">
             <i class="fas fa-eye"></i><span style="margin-top: 0; font-weight: 400; font-size: small;">Monitoring</span>

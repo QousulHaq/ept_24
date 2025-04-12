@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Inertia\Inertia;
 use App\Http\Requests\Package\Item\UpdateItemRequest;
+use App\Http\Requests\Package\Item\StoreItemRequest;
+use App\Jobs\Package\Item\CreateNewItem;
 use App\Jobs\Package\Item\UpdateExistingItem;
 
 class ItemController extends Controller
@@ -15,14 +17,38 @@ class ItemController extends Controller
     /**
      * @param \Illuminate\Http\Request $request
      * @param \App\Entities\Question\Package $package
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Throwable
      */
+    // * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
     public function create(Request $request, Package $package)
     {
-        $this->getPackageData($request, $package);
+        // $this->getPackageData($request, $package);
+        // return view('pages.package.item.create');
+        
+        $subpackageId = request()->query('subpackage');
 
-        return view('pages.package.item.create');
+        $subpackage = $package->findDescendant($subpackageId);
+
+        // Lakukan sesuatu dengan data Subpackage dan kategorinya
+        return Inertia::render("Packages/Item/Create",[
+            'package_id' => $package->id,
+            'subpackage_id' => $subpackage->id,
+            'config' => $subpackage->config,
+            'categories' => $subpackage->fresh(['categories'])->categories,
+        ]);
+    }
+
+    public function store(StoreItemRequest $request, Package $package)
+    {
+        $subpackageId = request()->query('subpackage');
+        $subpackage = $package->findDescendant($subpackageId);
+    
+        $job = new CreateNewItem($request, $subpackage);
+        $this->dispatchNow($job);
+
+        return ($job->success())
+            ? redirect()->route('back-office.package.index')->with('success', 'Item Updated!')
+            : redirect()->back()->withInput()->withErrors(['internal server error']);
     }
 
     /**
@@ -44,11 +70,17 @@ class ItemController extends Controller
             $item->answers->each(fn (Package\Item\Answer $answer) => $answer->makeVisible('correct_answer'));
         });
 
+        $subpackageId = request()->query('subpackage');
+
+        $subpackage = $package->findDescendant($subpackageId);
+
         // return view('pages.package.item.edit');
         return Inertia::render("Packages/Item/Edit",[
             'item' => $item,
             'isIntro' => $isIntro,
-            'package' => $package
+            'package_id' => $package->id,
+            'config' => $subpackage->config,
+            'categories' => $subpackage->fresh(['categories'])->categories,
         ]);
     }
 

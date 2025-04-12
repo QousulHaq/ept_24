@@ -94,11 +94,14 @@ const ShowPackages = ({ package: package_detail, items, intros, subpackage, sche
                     <div className="package-items-section">
                         <div className="introduction-table mb-3">
                             <h6>Introduction</h6>
-                            <SubpackageItemTable items={intros} package_id={package_detail.id} subpackage_id={subpackage.id}/>
+                            <SubpackageItemTable items={intros} package_id={package_detail.id} subpackage_id={subpackage.id} />
                         </div>
                         <div className="package-items-table">
-                            <h6>{subpackage.title}</h6>
-                            <SubpackageItemTable items={items.data} package_id={package_detail.id} subpackage_id={subpackage.id}/>
+                            <div className="package-item-title tw-flex tw-justify-between tw-items-center mb-3">
+                                <h6>{subpackage.title}</h6>
+                                <Link className='tw-bg-green-400 tw-text-white tw-p-2 tw-rounded-full' href={`/back-office/package/${package_detail?.id}/item/create?subpackage=${subpackage?.id}`}>+ New Question</Link>
+                            </div>
+                            <SubpackageItemTable items={items.data} package_id={package_detail.id} subpackage_id={subpackage.id} categories={subpackage?.categories}/>
                         </div>
                     </div>
                     {/* <div className="add-question-tools">
