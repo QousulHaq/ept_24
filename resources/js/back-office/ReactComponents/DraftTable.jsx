@@ -15,7 +15,13 @@ import { Link } from '@inertiajs/inertia-react'
 import Swal from 'sweetalert2'
 import moment from 'moment';
 
-function DraftTable({ table_data, showed_data, color, action_button = false, searchBar = false, loadingSearch = false, participantsStatusData = false }) {
+const ChipColor = {
+    "E-TEFL": "hsla(210, 66%, 50%, 0.3)",
+    "CPNS": "hsla(271, 42%, 38%, 0.3)",
+    "SMAN": "hsla(136, 57%, 41%, 0.3)",
+}
+
+function DraftTable({ table_data, showed_data, color, action_button = false, searchBar = false, loadingSearch = false, participantsStatusData = false, config_code_chip = false }) {
 
     const formattedTitle = (title) => {
         return title.replace(/_/g, ' ').toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -60,6 +66,12 @@ function DraftTable({ table_data, showed_data, color, action_button = false, sea
                                     <TableCell sx={{ fontWeight: 'bold' }} align='center' key="connection-header">Connection</TableCell>
                                 </>
                             )}
+
+                            {
+                                config_code_chip && (
+                                    <TableCell sx={{ fontWeight: 'bold' }} align='center' key="config-code-header">Category</TableCell>
+                                )
+                            }
 
                             {action_button && (
                                 <TableCell sx={{ fontWeight: 'bold' }} align='center' key="action-header">Actions</TableCell>
@@ -125,6 +137,19 @@ function DraftTable({ table_data, showed_data, color, action_button = false, sea
                                             </TableCell>
                                         </>
                                     )}
+
+                                    {
+                                        config_code_chip && (
+                                            <TableCell
+                                                component="th"
+                                                scope="row"
+                                                align='center'
+                                                key={`config-code-${item.id || rowIndex}`}
+                                            >
+                                                {config_code_chip(item.config_code, ChipColor[item.config_code])}
+                                            </TableCell>
+                                        )
+                                    }
 
                                     {action_button && (
                                         <TableCell

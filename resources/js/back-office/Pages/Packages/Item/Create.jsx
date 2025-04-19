@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react'
+
+import Axios from 'axios'
+import { useForm } from '@inertiajs/inertia-react'
+import { Inertia } from '@inertiajs/inertia'
+
 import InputQuestionCode from '../../../ReactComponents/InputQuestionCode'
 import MultipleChoice from '../../../ReactComponents/QuizBuilder/MultipleChoice'
 import SelectClassification from '../../../ReactComponents/QuizBuilder/SelectClassification'
 import Bundle from '../../../ReactComponents/QuizBuilder/Bundle'
 
-import { useForm } from '@inertiajs/inertia-react'
 
 const itemBundleChildrenObject = {
     answer_order_random: true,
@@ -47,6 +51,8 @@ const itemSingleObject = {
 const Create = ({ package_id, subpackage_id, config, categories }) => {
 
     const [singleQuestion, setSingleQuestion] = useState(itemSingleObject)
+    const [bundleQuestion, setBundleQuestion] = useState(itemBundleObject)
+    const [loading, setLoading] = useState(false)
 
     const { data, setData, post, processing, errors } = useForm()
 
@@ -64,7 +70,12 @@ const Create = ({ package_id, subpackage_id, config, categories }) => {
 
     const SaveEditData = () => {
         // console.log("data di create", data)
-        post(`/back-office/package/${package_id}/item/store?subpackage=${subpackage_id}`)
+        setLoading(true)
+        post(`/back-office/package/${package_id}/item/store?subpackage=${subpackage_id}`, {
+            onSuccess: (response) => {
+                Inertia.visit(`/back-office/package/${package_id}?subpackage=${subpackage_id}`)
+            }
+        })
     }
 
     const handleContentChange = (data, data_index) => {
@@ -124,34 +135,36 @@ const Create = ({ package_id, subpackage_id, config, categories }) => {
         }))
     }
 
-    return (
-        <>
-            {
-                config.item.type !== "multi_choice_single" ?
-                    <>
-                        <Bundle onDataChange={(data) => setData(data)} itemTemplateData={itemBundleObject} isAudio={config.item?.extra?.includes('audio')}/>
-                    </>
-                    :
-                    <>
-                        <SelectClassification classifications={categories} value={singleQuestion.category} onChange={(data) => setSingleQuestion((prev) => ({ ...prev, category: data }))} />
-                        <InputQuestionCode content_data={singleQuestion.code} handleQuestionCodeChange={(data) => setSingleQuestion((prev) => ({ ...prev, code: data }))} />
-                        <MultipleChoice
-                            content_data={singleQuestion}
-                            number={0}
-                            isBundle={false}
-                            isAudio={config.item?.extra?.includes('audio')}
-                            handleContentChange={(data, id) => handleContentChange(data, id)}
-                            handleAnsContentChange={(value, question_index, answer_index) => handleAnsContentChange(value, question_index, answer_index)}
-                            handleAnswerChange={(question_index, answer_index) => handleAnswerChange(question_index, answer_index)}
-                            handlePushAnswer={(index, answer_index) => handlePushAnswer(index, answer_index)}
-                            handleDeleteAnswer={(question_index, answer_index) => handleDeleteAnswer(question_index, answer_index)}
-                            handleAudioChange={(data) => setSingleQuestion((prev) => ({ ...prev, attachment: data }))}
-                        />
-                    </>
-            }
-            <button onClick={SaveEditData}>{processing ? "Menyimpan" : "Save Data"}</button>
-        </>
-    )
+
+    return loading ? (<p>sedang membuat</p>) :
+        (
+            <>
+                {
+                    config.item.type !== "multi_choice_single" ?
+                        <>
+                            <Bundle onDataChange={(data) => setData(data)} itemTemplateData={bundleQuestion} isAudio={config.item?.extra?.includes('audio')} />
+                        </>
+                        :
+                        <>
+                            <SelectClassification classifications={categories} value={singleQuestion.category} onChange={(data) => setSingleQuestion((prev) => ({ ...prev, category: data }))} />
+                            <InputQuestionCode content_data={singleQuestion.code} handleQuestionCodeChange={(data) => setSingleQuestion((prev) => ({ ...prev, code: data }))} />
+                            <MultipleChoice
+                                content_data={singleQuestion}
+                                number={0}
+                                isBundle={false}
+                                isAudio={config.item?.extra?.includes('audio')}
+                                handleContentChange={(data, id) => handleContentChange(data, id)}
+                                handleAnsContentChange={(value, question_index, answer_index) => handleAnsContentChange(value, question_index, answer_index)}
+                                handleAnswerChange={(question_index, answer_index) => handleAnswerChange(question_index, answer_index)}
+                                handlePushAnswer={(index, answer_index) => handlePushAnswer(index, answer_index)}
+                                handleDeleteAnswer={(question_index, answer_index) => handleDeleteAnswer(question_index, answer_index)}
+                                handleAudioChange={(data) => setSingleQuestion((prev) => ({ ...prev, attachment: data }))}
+                            />
+                        </>
+                }
+                <button onClick={SaveEditData}>{loading ? "Menyimpan" : "Save Data"}</button>
+            </>
+        )
 }
 
 export default Create

@@ -5,6 +5,7 @@ const Create = () => {
   const { data, setData, post, processing, errors } = useForm({
     title: '',
     description: '',
+    preset : 'E-TEFL',
     level: 0,
   })
 
@@ -28,6 +29,22 @@ const Create = () => {
                 <label htmlFor="description">Description</label>
                 <textarea name="description" id="description" className="form-control" style={{ height: "60px" }} onChange={(e) => setData('description', e.target.value)} value={data.description}></textarea>
                 {errors.description && <p style={{ color: "red" }}>{errors.description}</p>}
+              </div>
+              <div className="form-group">
+                <label htmlFor="preset">Category</label>
+                <select
+                  name="preset"
+                  id="preset"
+                  className="form-control"
+                  onChange={(e) => {
+                    setData('preset', e.target.value)
+                  }}
+                  value={data.preset}>
+                  <option value="E-TEFL">E-TEFL</option>
+                  <option value="CPNS">CPNS</option>
+                  <option value="SMAN">SMAN</option>
+                </select>
+                {errors.preset && <p style={{ color: "red" }}>{errors.preset}</p>}
               </div>
               <div className="form-group">
                 <label htmlFor="level">Level</label>

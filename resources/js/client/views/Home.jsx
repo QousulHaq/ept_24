@@ -15,6 +15,11 @@ import buku from "../public/img/buku.png";
 function Home() {
   const dispatch = useDispatch()
   const [loaded, setLoaded] = useState(false);
+  const [cardData, setCardData] = useState({
+    "CPNS": [],
+    "SMAN": [],
+    "E-TEFL": []
+  })
 
   const loading = useSelector((state) => state.exam.status === "fetching")
   const time = useSelector((state) => state.exam.params?.state)
@@ -28,6 +33,22 @@ function Home() {
   useEffect(() => {
     dispatch(fetchExam())
   }, [])
+
+  useEffect(() => {
+    if (exams) {
+      setCardData(
+        exams.reduce((result, exam) => {
+
+          if (!result[exam.package.config.code]) {
+            result[exam.package.config.code] = [];
+          }
+
+          result[exam.package.config.code].push(exam);
+          return result;
+        }, {})
+      )
+    }
+  }, [exams])
 
   return (
     <div className='Home'>
@@ -75,7 +96,10 @@ function Home() {
                 />
               </div>
             </div>
-            <CardStudentHome exams={exams} loading={loading} />
+            <CardStudentHome
+              exams={cardData}
+              loading={loading}
+            />
           </Grid2>
 
           <Grid2 size={4}>

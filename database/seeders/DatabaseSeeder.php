@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
         $this->call(AttachmentsTableSeeder::class);
 
         $this->call(ETeflSeeder::class);
+        $this->call(CpnsSeeder::class);
+        $this->call(SmanSeeder::class);
 
         if (! app()->runningUnitTests()) {
             $this->call(ExamTableSeeder::class);

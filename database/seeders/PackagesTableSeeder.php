@@ -13,6 +13,16 @@ class PackagesTableSeeder extends Seeder
             dispatch_now(new CreateNewPackage([
                 'title' => 'Example Package',
             ]));
+
+            dispatch_now(new CreateNewPackage([
+                'title' => 'Example Package - CPNS',
+                'preset' => 'CPNS',
+            ]));
+
+            dispatch_now(new CreateNewPackage([
+                'title' => 'Example Package - SMAN',
+                'preset' => 'SMAN',
+            ]));
         });
     }
 }

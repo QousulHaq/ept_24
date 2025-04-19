@@ -9,5 +9,7 @@ return [
      */
     'presets' => [
         App\Extra\Presets\ETefl::class,
+        App\Extra\Presets\Cpns::class,
+        App\Extra\Presets\Sman::class,
     ],
 ];

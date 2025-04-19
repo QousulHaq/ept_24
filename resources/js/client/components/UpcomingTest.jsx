@@ -32,7 +32,7 @@ function UpcomingTest() {
         <div className='upcoming-test-card tw-rounded-lg tw-shadow-lg tw-p-6 tw-border tw-border-neutral3'>
             <h1 className={`tw-text-lg tw-text-primary1 tw-font-bold tw-text-center tw-mb-5`}>Tes yang akan datang</h1>
             <div className="upcoming-test-content">
-                {exams.map((value, index) => (
+                {!loading && exams.map((value, index) => (
                     <div className={`upcoming-test tw-bg-primary1 tw-flex tw-justify-center tw-items-center tw-py-5 tw-rounded-lg tw-gap-4 tw-mb-3`} key={index}>
                         <h1 className='tw-text-xl tw-font-bold tw-text-white'>{value.name}</h1>
                         <div className="test-date-time">

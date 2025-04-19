@@ -47,7 +47,7 @@ class ItemController extends Controller
         $this->dispatchNow($job);
 
         return ($job->success())
-            ? redirect()->route('back-office.package.index')->with('success', 'Item Updated!')
+            ? redirect()->back()
             : redirect()->back()->withInput()->withErrors(['internal server error']);
     }
 
@@ -79,6 +79,7 @@ class ItemController extends Controller
             'item' => $item,
             'isIntro' => $isIntro,
             'package_id' => $package->id,
+            'subpackage_id' => $subpackageId,
             'config' => $subpackage->config,
             'categories' => $subpackage->fresh(['categories'])->categories,
         ]);
@@ -90,7 +91,7 @@ class ItemController extends Controller
         $this->dispatchNow($job);
 
         return ($job->success())
-            ? redirect()->route('back-office.package.index')->with('success', 'Item Updated!')
+            ? redirect()->back()
             : redirect()->back()->withInput()->withErrors(['internal server error']);
     }
 

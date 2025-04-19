@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { Grid2 } from '@mui/material'
+import { Grid2, Chip } from '@mui/material'
 import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 
 import Card from '../ReactComponents/Card';
@@ -9,9 +9,10 @@ import DraftTable from '../ReactComponents/DraftTable';
 import { Link } from '@inertiajs/inertia-react'
 
 function Home({ totalStudent, totalFutureExam, totalPastExam, totalPresentExam, packages }) {
-  
+
   useEffect(() => {
     console.log(packages)
+    console.log(packages.data.map((item) => (item.config.code)))
   })
 
   return (
@@ -24,7 +25,7 @@ function Home({ totalStudent, totalFutureExam, totalPastExam, totalPresentExam, 
           </div>
           <div className="card-content-container tw-my-6">
             <Grid2 container columnSpacing={4}>
-              <Card card_data={packages?.data} />
+              <Card card_data={packages.data.map((item) => ({ ...item, config_code: item.config.code }))} />
             </Grid2>
           </div>
           <div className="card-table-content">
@@ -35,7 +36,7 @@ function Home({ totalStudent, totalFutureExam, totalPastExam, totalPresentExam, 
               </div>
               <div className="table-content">
                 <DraftTable
-                  table_data={packages}
+                  table_data={{ ...packages, data: packages.data.map((item) => ({ ...item, config_code: item.config.code })) }}
                   showed_data={["title", "code", "created_at"]}
                   action_button={
                     (row) => (
@@ -43,6 +44,13 @@ function Home({ totalStudent, totalFutureExam, totalPastExam, totalPresentExam, 
                         <Link className='tw-px-3 tw-py-2 hover:tw-bg-slate-200' href={`/back-office/package/${row?.id}?subpackage=${row?.children[0].id}`}>
                           <VisibilityRoundedIcon fontSize='small' color='secondary' />
                         </Link>
+                      </div>
+                    )
+                  }
+                  config_code_chip={
+                    (row, bgColor) => (
+                      <div className="tw-flex tw-items-center tw-justify-center">
+                        <Chip label={row} sx={{ bgcolor: bgColor, color: 'black', padding: '0.5rem 1rem' }} />
                       </div>
                     )
                   }

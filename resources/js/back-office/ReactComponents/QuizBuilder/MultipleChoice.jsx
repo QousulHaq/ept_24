@@ -9,11 +9,9 @@ import Underline from '@tiptap/extension-underline'
 import "../../../../../public/css/back-office/multiple-choices.css"
 
 const MultipleChoice = ({ content_data, number, isBundle = true, isAudio, handleContentChange, handleAnsContentChange, handleAnswerChange, handlePushAnswer, handleDeleteQuestion, handleDeleteAnswer, handleAudioChange }) => {
-
-    const [content, setContent] = useState(content_data)
     const editor = useEditor({
         extensions: [StarterKit, Underline],
-        content: content.content,
+        content: content_data.content,
         onUpdate: ({ editor }) => {
             const html_content = editor.getHTML();
             handleContentChange(html_content, number)
